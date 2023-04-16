@@ -229,7 +229,1472 @@
         
 <br><br>
 
+ <!-- IGNORE BELOW its hidden code from eluvio -->
+ <div id="error-message"></div>
+ <div class="controls"style="display: none;">
+ <div id="bitrate"></div>
+<!-- hide buttons -->
+<div class="actions" style="display: none;">
+<button id="select-hls-dash">hls.js / dashjs</button>
+<button id="select-bitmovin">Bitmovin</button>
+</div>
+
+<!-- hide display of buttons -->
+<div class="actions" style="display: none;">
+<button id="load-hls">Play HLS Clear</button>
+<button id="load-hls-aes">Play HLS AES-128</button>
+<button id="load-hls-sample-aes">Play HLS Sample AES</button>
+<button id="load-hls-fairplay">Play HLS FairPlay</button>
+<button id="load-dash">Play Dash Clear</button>
+<button id="load-dash-wv">Play Dash Widevine</button>
+</div>
+
+<!-- hide input display -->
+<div class="input-container" style="display: none;">
+<input
+ id="config-url"
+ value="https://main.net955305.contentfabric.io/config"
+ placeholder="Config URL">
+</div>
+
+<!-- hide config -->
+<div class="input-container" style="display: none;">
+<label for="player-configuration">Player Configuration</label>
+<textarea id="player-configuration" placeholder="Player Configuration"></textarea>
+</div>
+
+<!-- hide action buttons -->
+<div class="actions" style="display: none;">
+<button class="active" id="load-button">Load</button>
+</div>
+</div>
+<!-- VSIR Smart Purchase Button HTML -->
+<div>
+ <!-- SINGLE LINK BUTTON -->
+ <!-- <a href="https://wallet.preview.contentfabric.io/?preview=iq__PoyQD1L385EWHguKYvGNUbpyXbP&mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC" class="purchaseButton" target="_blank"><img src="./src/img/purchase.png" alt="Purchase button"/></a> -->
+
+  <!-- ARRAY BUTTON -->
+  <!-- create the array in JS below -->
+  <!-- <a id="currentLink" href="#" class="purchaseButton" target="_blank"><img src="images/purchase.png" alt="Purchase button"/></a> -->
+ <!-- API PULL URL -->
+ <!-- <a href="https://wallet.preview.contentfabric.io/?preview=iq__PoyQD1L385EWHguKYvGNUbpyXbP&mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/"+currentSong.SKU class="purchaseButton" target="_blank"><img src="./src/img/purchase.png" alt="Purchase button"/></a> -->
+ </div>
+
+<!-- VSIR Javascript -->
+<script type="module">
+ import {InitializeFairPlayStream} from "./FairPlay.js";
+
+ let PROTOCOL = "hls";
+ let DRM = "clear";
+ let PLAYER_TYPE = "hls-dash";
+ let player;
+
+ const SetErrorMessage = (message) => {
+   document.getElementById("error-message").innerText = message;
+ };
+
+ const PlayerConfiguration = () => {
+   try {
+     const configuration = document.getElementById("player-configuration").value.trim();
+
+     if(!configuration) { return {}; }
+
+     return JSON.parse(configuration);
+   } catch(error) {
+     SetErrorMessage("Unable to parse player configuration");
+     return {};
+   }
+ };
+
+ const UpdateButtons = () => {
+   [
+     "select-hls-dash",
+     "select-bitmovin",
+     "load-hls",
+     "load-hls-aes",
+     "load-hls-sample-aes",
+     "load-hls-fairplay",
+     "load-dash",
+     "load-dash-wv"
+   ].forEach(id => document.getElementById(id).className = "");
+
+   if(PLAYER_TYPE === "bitmovin") {
+     document.getElementById("select-bitmovin").className = "active";
+   } else {
+     document.getElementById("select-hls-dash").className = "active";
+   }
+
+   let activeOption;
+   if(PROTOCOL === "hls") {
+     if(DRM === "aes-128") {
+       activeOption = "load-hls-aes";
+     } else if(DRM === "sample-aes") {
+       activeOption = "load-hls-sample-aes";
+     } else if(DRM === "fairplay") {
+       activeOption = "load-hls-fairplay";
+     } else {
+       activeOption = "load-hls";
+     }
+   } else {
+     if(DRM === "widevine") {
+       activeOption = "load-dash-wv";
+     } else {
+       activeOption = "load-dash";
+     }
+   }
+
+   document.getElementById(activeOption).className = "active";
+   
+   document.getElementById("nextButton").onclick = function () {
+     console.log("play next track");
+     playNextTrack();
+   };
+ };
+
+ const DestroyPlayer = () => {
+   // Stop current player
+   if(player) {
+     player.unload ? player.unload() : (player.destroy ? player.destroy() : player.reset());
+   }
+
+   // Remove video element
+   const existingElement = document.getElementById("video-element");
+   if(existingElement) {
+     document.body.removeChild(existingElement);
+   }
+
+   document.getElementById("bitrate").innerHTML = "";
+ };
+
+ const CreatePlayerElement = () => {
+   DestroyPlayer();
+
+   let playerElement;
+   if(PLAYER_TYPE === "bitmovin") {
+     // Bitmovin is attached to a 'div' element, not a 'video' element
+     playerElement = document.createElement("div");
+   } else {
+     playerElement = document.createElement("video");
+     playerElement.controls = true;
+     playerElement.autoplay = true;
+   }
+
+   playerElement.id = "video-element";
+
+   document.body.prepend(playerElement);
+
+   return playerElement
+ };
+
+ const LoadHlsJs = (playoutOptions) => {
+   const playoutMethods = playoutOptions.hls.playoutMethods;
+
+   let playoutInfo;
+   if(DRM === "aes-128") {
+     playoutInfo = playoutMethods["aes-128"];
+   } else if(DRM === "sample-aes") {
+     playoutInfo = playoutMethods["sample-aes"];
+   } else {
+     playoutInfo = playoutMethods.clear;
+   }
+
+   if(!playoutInfo) {
+     SetErrorMessage(`HLS ${DRM} playout not supported for this content`);
+     return;
+   }
+
+   const playerElement = CreatePlayerElement();
+
+   // Use native player for Sample AES and FairPlay
+   if((DRM === "sample-aes" && PLAYER_TYPE !== "bitmovin") || !Hls.isSupported()) {
+     playerElement.src = playoutInfo.playoutUrl;
+     return;
+   } else if(DRM === "fairplay" && PLAYER_TYPE !== "bitmovin") {
+     InitializeFairPlayStream({playoutOptions, video: playerElement});
+     return;
+   }
+
+   player = new Hls(PlayerConfiguration());
+   player.loadSource(playoutInfo.playoutUrl);
+   player.attachMedia(playerElement);
+ };
+
+ const LoadDash = (playoutOptions) => {
+   const playoutMethods = playoutOptions.dash.playoutMethods;
+
+   let playoutInfo, licenseServer;
+   if(DRM === "widevine") {
+     playoutInfo = playoutMethods.widevine;
+
+     if(playoutInfo) {
+       licenseServer = playoutMethods.widevine.drms.widevine.licenseServers[0];
+     }
+   } else {
+     // Play clear
+     playoutInfo = playoutMethods.clear;
+   }
+
+   if(!playoutInfo) {
+     SetErrorMessage(`Dash ${DRM} playout not supported for this content`);
+     return;
+   }
+
+   const playerElement = CreatePlayerElement();
+   player = dashjs.MediaPlayer().create();
+   player.setProtectionData({
+     "com.widevine.alpha": {
+       "serverURL": licenseServer
+     }
+   });
+
+   player.initialize(playerElement, playoutInfo.playoutUrl);
+
+   player.updateSettings(PlayerConfiguration());
+
+   player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, () => {
+     const currentLevel = player.getBitrateInfoListFor("video")[player.getQualityFor("video")];
+
+     document.getElementById("bitrate").innerHTML = `${currentLevel.width}x${currentLevel.height} | ${currentLevel.bitrate / 1000 / 1000} Mbps`;
+   });
+ };
+
+ const LoadBitmovin = (playoutOptions) => {
+   const playerElement = CreatePlayerElement();
+
+   const config = {
+     key: "532a4784-591a-4039-8497-5feb80e5dd66",
+     playback: {
+       autoplay: true
+     },
+     events: {
+       [bitmovin.player.PlayerEvent.VideoPlaybackQualityChanged]: ({targetQuality}) => {
+         document.getElementById("bitrate").innerHTML =
+           `${targetQuality.width}x${targetQuality.height} | ${targetQuality.bitrate / 1000 / 1000} Mbps`;
+       }
+     },
+     ...PlayerConfiguration()
+   };
+
+   player = new bitmovin.player.Player(playerElement, config);
+
+   player.load(playoutOptions).catch(
+     (error) => {
+       DestroyPlayer();
+       if(error.name === "SOURCE_NO_SUPPORTED_TECHNOLOGY") {
+         SetErrorMessage(`${PROTOCOL} ${DRM} playout not supported for this content`);
+       } else {
+         SetErrorMessage(`Bitmovin error: ${error.name}`);
+         console.error(error);
+       }
+     }
+   );
+ };
+ const playNextTrack = async () => {
+   SetErrorMessage("");
+
+   try {
+     const client = await ElvClient.FromConfigurationUrl({
+       configUrl: document.getElementById("config-url").value
+     });
+     window.client = client;
+
+     await client.SetStaticToken({
+       token: client.utils.B64(JSON.stringify({qspace_id: await client.ContentSpaceId()}))
+     });
+
+     let playlist = await client.ContentObjectMetadata({
+       libraryId: "ilib3PBhfL7TEdhaHjnhLMwhAoiwnUp7",
+       objectId: "iq__2X6yb9XGgr1X6eGcNe5ssXY1AuxY",
+       versionHash: "hq__Lvvt745s8XUyUPAbo2xtmv7uUSt58PEgfkmHyfarwCXb6deAH5HNVvh3fMjvMjSz22CcbjTh72",
+       "metadataSubtree": "public/asset_metadata/titles",
+       "resolveLinks": true, "resolveIgnoreErrors": true, "resolveIncludeSource": true,
+     });
+     window.console.log("playlist", playlist);
+
+     let songs = [];
+     for (let [_, song] of Object.entries(playlist)) {
+       for (let slug of Object.keys(song)) {
+         const title = song[slug]["display_title"];
+         const hash = song[slug]["."]["source"];
+         songs.push({ "title": title, "hash": hash });
+       }
+     }
+     window.console.log("songs", songs);
+
+     const songsdata = [
+
+ // batch 1
+ {
+     "title": "Million Dollar Smile",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__BSki1joYvZ5pxc4PAWr2zWxT8A681Vmx3xzTrihC66R5sZMJKzAzC2mA7Wnfc83sdg4r6XcKo7"
+ },
+ {
+     "title": "Never Change",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__Gi3EqZiTJevLqaq83pJCNQGufknyLXMV9RVuj6xGoySmuQAdoAKMfCJvuSfe4FjkNmjXG6vjnR"
+ },
+ {
+     "title": "Emotions",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__6M9FiipqT2uMZ7SzRLAkPv6kD6S2jYHS9gVf1Ciw9V1nNWBaXW2yHYLEzTdZQvtL3LvRaQoyQe"
+ },
+ {
+     "title": "My People",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__CztBhAG64BvAT4UbEhvMunNXELkHw3Pps8wa8ZDDyD6TAcEAkRSutc2sTEVU3mSgjbqXvnR782"
+ },
+ {
+     "title": "Music Life",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__JNVfsjkigT8AAwNuJsSGzZybvJe6veB9VmjoKXTVgqjGUvYUUjZVwXszjZGQKwn6u4edi8WyDx"
+ },
+ {
+     "title": "By Any Means",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__Y1h44dKaF5nkVSy1iJy1rdZnYHq7pz5AuXRgMAbiJ3bER8a41JoNzrqCpHPn1CZP5YyfAkoZQ"
+ },
+ {
+     "title": "Lucky You",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__8eBYhtoDRst2XBfyacitZRuRKmhbXneTiNWkXcrqndRVysrWDUeknYDgQLagdxSwML3b3fvozY"
+ },
+ {
+     "title": "Dreaming Tree Intro",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__Ce8zpFC84JdD4Hruba6aSJ5jPZUHcEPHpmgeyWamDaqAbcDLjPijK4mZEhk5E6UBLh9cPxxazy"
+ },
+ {
+     "title": "ATL Visions",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__3nFJYi2y2RtQL9pxuJCtDV4YxrwA2qHEvWrwLkXRBKBBvM8iPXeYmqSa4WXoHifBjfyrw5TTNU"
+ },
+ {
+     "title": "Beirut Explosion",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__6G3aYKqeLMFySMcTY1TMdEKsvzK4ipsMA5iF9fXFQr6g99aAPPNc2BbDXnJ472EMWJVrsTB59u"
+ },
+ {
+     "title": "Breathe of Fresh",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__MTuMKd8qpPZGMZrM1CPmF4KRDjmy2ELSXcpAtc33ATgtf7nRKcQ6p2VkNCDoZaTL5hKz5x6bNM"
+ },
+ {
+     "title": "Angels Stadium",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__KintEcLxmPYTRDrhQuvds1yELdJCWE4umis1WzocE8if3KhNue66tARPxCSk9YMGro3BvrSXBL"
+ },
+ {
+     "title": "LAYAWAY",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__LMfBziXSxjGd22ssLft7hjRut3tfAh24y2DhjUHZZkzna94C1rwo9uSgL3QaJwSoKnvtnNQp3p"
+ },
+ {
+     "title": "How Wonderful",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__MYhWdXkbSxAh8e2qRmWBUXMfg5soErGzffDENhd65R3dz41hXqVTr42cE52tjgUvjtVdX6M4K9"
+ },
+ {
+     "title": "Birds in the Garden",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__7QBnDfFYPEaNLfZWwT6xvsPodjzT41Aam3aDdsV7AKLrLPW1D31oWUUV26e1dfv4kBdSXiDT3j"
+ },
+ {
+     "title": "Greens & Things",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__8GpYQ72mz6zJ42yB8Hnt4JuVzNLcfTCvaNJ4nPeq33igPT8YYg8s5Z898grEiVusDZ7XZ9eEwk"
+ },
+ {
+     "title": "Arithmetic",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__BXqQ2kjoQFwqmeBCPsCP88krWnsNtsbo5RJiY7H3Kj6N13Xtz58beZKEsRHtGdfsPVvMV1S3Bi"
+ },
+ {
+     "title": "Locust",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__8BBwAyMuVLdKuAAtrcNWd14mA1t1xYxTUypa28W8dSRMiqgr6ktj1kNEQkpLjRBNCb86knFCoL"
+ },
+ {
+     "title": "Drone",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__7pXXbAY35V8wAuchxYLv5PEmT7hh4rm6yWF5xodTz7RegVqhDZpsKfqQVJztW3qeKDmpe6xjkc"
+ },
+ {
+     "title": "F_CK2020",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__7KwBr8o67aKcDPHtbenqHLWQff7kNdBHU9nLLuVgm75Mj1MheoYo2mXe3kQrCbyAEES7NjeyR5"
+ },
+
+ // batch 2
+
+ {
+     "title": "2am In LA",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__4Dw5fkHeLAcUkyZEsYbmfQ1AqL9yG8vuLink5gosL3FnWDshVw3mro8nmPEqJAX1G6xYgnXey1"
+ },
+ {
+     "title": "Black Panther",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__5B3Xnt3cEkkr3mJYX6tJtTZLGZcTn16UrUpVA2L53y2sqGiwYEFP26VHkGqe7vXErJwSQBh5Cz"
+ },
+ {
+     "title": "Chitty Bang",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__FeyxcpPRARChESYdVVZCQFLaHX5bMMBXcVfrAw3nesQXwifxt2SxwFPGDtAbMW7X3J96hAAg14"
+ },
+ {
+     "title": "Coming",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__KcoSsGz8pKrgfKTio4hhEAWt9crPkJnzMW4hZYYjJkdcznpFL4g8UEkRZz81KhUh25Mo53m7dp"
+ },
+ {
+     "title": "HeadRoll",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__G1t6B6r23fx8xoBtu1dWA3jL9yuZMF7zzXosEo5zwwGH4yEVwhV6v1d8CCoPzwWMNE6FVAAHCF"
+ },
+ {
+     "title": "I'm Yours",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__F7BXRRV5sYx9FJv932tb1fcsxkJktb5LvFN1Yro2RfE9u5VmqunixdqADTtqmuU7aNAMYnEqgK"
+ },
+ {
+     "title": "New Africa",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__9TpRgQWThsRqPwRudR3dKZffFRsAbgSpMvgXguCADDgwt7Hpi2fbUZpHbCaxsbejknAuwLzhR6"
+ },
+ {
+     "title": "Nigerian Love",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__3FkrE3i4e873G3uWc6B6VCK7o97WNbgXKtBcQWwPmzSittQdtLZ3XdKdFQZAWgdB1FizRpbPx5"
+ },
+ {
+     "title": "Others",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__9LgWodoydEfqqVB1cZLxfDrbnqe52j64GpkgRo3NMX825sa1xkWrbDYzuRwFrgbR8mE89mGrv"
+ },
+ {
+     "title": "Rhetoric",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__BqwY621RMd7ccaJChqGkxooEbPcJQ5xJAfV2vesFRCynn4Ca5VEgr8StngiLzuh9QmJQZQWJzh"
+ },
+ {
+     "title": "Soul For A Soul",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__5a6QBjz5gCk7vaPr7TDD3kuQge9MYrQZdD62nny7Zyi7xEcc8xujvRv3zEBMWhJvf4ZRjTTULz"
+ },
+ {
+     "title": "Sundae Vibes",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__EXViNii4u6KTdnny3cRD2wjNuCHjVESkZpYGr7Wb3NGUWxYxoJKWVqRrrS2aGDZkkp9tVQ7HU4"
+ },
+ {
+     "title": "Thanos",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__3t7nhrJ2RJzuJATzKmXyUE8BLhrLMwmCQTc3qgrPrnM75qKpjAqgRSc4fG7kHVTvnuXLTojP16"
+ },
+ {
+     "title": "Thoughts of He",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__6yoi7Ry8bMLi4ugt4Uy6hnqcDwfmnMyPHwwBfHGnshkesa6fa6zMwKmBUFjpG9nntbaMJdZ8pb"
+ },
+ {
+     "title": "Tomorrow",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__CYoh1HjHjC3hmZXhYNpo6RWGXww78fAYPM4AnusYTvhoy31JqJWWJTT4PvNYDhFkyAn14BTMAq"
+ },
+ {
+     "title": "Tortoise",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__DeuKkpkMLM4g7PTaqcLDdTtHnursDzHhD5zGaH54FpuDPDgui3gGbrbsuaSxBkd5ERaXEobxu8"
+ },
+ {
+     "title": "TRAP JAZZ",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__ERzpuksdQei1kU4qsYjoS34x4naiGCivjQhvhTHpRDuQdpMs69qYNa34QYCaPpzTaqDTaphE7v"
+ },
+ {
+     "title": "Undefind",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__54KQuJbN9Fj8z5hAegxBwiaoqKC6hf3VjtNWJgcw2VGjH65zwE7MPtz5yqYKQiZLdEkS54CGf2"
+ },
+ {
+     "title": "Weedemic",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__GN1CrpvR7okpp2gQfGpLCjrkcCLXFoPGYEVGdyMYpXSjmZApQHL3oKg8hkCwUhY1pxcTSXpjhY"
+ },
+ {
+     "title": "Wonder Bread",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__7WvXFrq4qSFYvAScGbmBoSw2PchgCCPHtdDzCSo1pLqUfQccUqdyn3d4YtsMAYZCkV4m5xu4kR"
+ },
+
+ // batch 3
+
+ {
+     "title": "432HZ",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__FjC9YD5eTGL2CQgKihtxTW8UMoFX79hvARc4t5qavEaeDCmeJ3aCSEPxkwEwLVevtdoBEZk62J"
+ },
+ {
+     "title": "After Shook",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__87Fkgp6DGMj4ooiTkx1NaoenR3dN3JatMiCRhL3aR4S5j7BuWyYGvwcSxbbu6ya4css6jQ1J1E"
+ },
+ {
+     "title": "Bad Baby",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__5BinocKtiHf6nVU7urZEZSEGBdMagUgPbLDdzMCGjZGXj9bgPyTZpeh73quXPAijhqFmXkjDZy"
+ },
+ {
+     "title": "Car Model",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__CwjxeN4SwgnTDij6QVL9rZDfqHXu48imFXvc8Ezfk24A6UFnJqX8ngaSAjsJk7sXdr6T1LBPep"
+ },
+ {
+     "title": "Life Force",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__3cTFWCKgPVA3QgJwrtH2bPzojwhzNafXv9Sc7YLMdwAzMkCRcrcLpBuvwoZED21pgt15ibdKkV"
+ },
+ {
+     "title": "Like Water",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__43T6VDEiB62aEx9Hd6W5yeuW1EWfK1S8123678oFE1XccYbDqfoMBnbVWyq9D3V6Rh4AhqRVVD"
+ },
+ {
+     "title": "Long Day Still Going",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__44d2pgvrfAehRAenuAkYebXMawSKAak9MvNi7cipPaXRPbFzgbSPzcTjHsroDZ4mt8oYY3znSj"
+ },
+ {
+     "title": "Neon Kids",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__6niPKXiVPeQmPPnf4WvXPUzRPYBaawN8RBDct5nVwJkCyBLKbUhf5dSpvZdmrygnV9vcCpWMdA"
+ },
+ {
+     "title": "Only In Japan",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__BbSa1yq56CSDqDpZRTRYUtWKf7Z318KDCWga9PK7hhSZ3wqmuKsE4xaRFRgyVfR7eHMcia9cn6"
+ },
+ {
+     "title": "Pianos Of Life",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__2hUQ85NwP6B3MvvoRBgjSJRytWMgKUiYXVynm88NrpQ3GgEB6UWMkCvLSfVo5tNRFeRy7tLVvk"
+ },
+ {
+     "title": "Pray For Me",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__2JNs5ErBdpJY4P2obZsXAyVekMQDhGFfhxGAfiCTgCK267yd89VCxEQsQJ2YzE43hXeSCiWNZX"
+ },
+ {
+     "title": "RYBE",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__9HpkYsbAgDbM8mTMaZ8J2qQdjvU4earKTypbsNJKdyKdbQfSA1Ckzdj1V6fGTC4JMcuFncrNrp"
+ },
+ {
+     "title": "Science Fiction",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__R1vvWNG5QnaTb7xQxMkJfNvUuauc6c6sewnuAB7JLs24HCAMUdVvVbu6bVGjZbzKShzEdq4aG"
+ },
+ {
+     "title": "Special Ones",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__2HFbSZM4ZvWB9n752aY2tiJvyqH4MeYTBLavXp52ht3WLa8bMbBCtJhwxxzCRUJTo3WB29s1xp"
+ },
+ {
+     "title": "Stalyon",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__AsEzySedNZmsQNNcnr9DoRDacJ33efRg11NVyLdhcczKAsvYQmNpACyFaLSm4ao2rJRuLN6PvT"
+ },
+ {
+     "title": "Sweet Dream",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__JoBQrKkkb14eMGThAuUYPimp1ZKGo2noKkJgKSSpLYEDd2WQvEWTQRrmVrWr94yZGg7oVdE2uG"
+ },
+ {
+     "title": "SWV",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__KtW9vjVAUm9kyPbZVL7fiUpQKSQg9Zs4XHBsotM4QpXrc1zPrDEZ1pnGyoQCK2rnjLEka6PPD2"
+ },
+ {
+     "title": "Tongue&Cheek",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__8zJCK5dUryBY4yUnoUsrLZkrNgEBiEFMj6R3io3Hse5q3KTMBL5cpWM1P7MioaQ5FiryjFLpqv"
+ },
+ {
+     "title": "Unsolved Mysteries",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__Kscj6cpy7jKg19nD6AoDbSFwiQpv83WPNJ49VjmC8WNQat2fFc2ymTrGx7uwV8hZydGTDPuhip"
+ },
+ {
+     "title": "Wave Runner",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__3odbcdSYGPT1GGBdttiwo3nEPLBNv4SSo7gV1AxfYD7iGqwdym81Ai3KrFPnXcBwaeKaQmxk1j"
+ },
+
+ // batch 4
+
+ {
+     "title": "BELIEVE NOTHING",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__8RNNoxYdEgyW7ysRjoUmkZfLruGcQg4ErXyGxWHG9mwnUBR7qmKtnUPxJshkuLcUYmJPut64Bp"
+ },
+ {
+     "title": "Beloved",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__3GtfuEtKADazXQ2mpz3pua2gwjjP2hxLxaThLDziKLLKBhxBnsZVKctbQLWxNPsGDXcV8SxmNP"
+ },
+ {
+     "title": "Clamp Down",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__ES8jbfqjtBSj5JvXtJzJ4VtM6zXpfXgMqcqP1GEnN1PmFQjgDtPMXEDRyyZbFKf7eipPVt5Mtk"
+ },
+ {
+     "title": "Computer Gods",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__4vSM81PkaJTwFCVeJj6jGcP7e9cZu73Rd39ShX8U6PgXiNPgcCggVkrq8ZCcXPogjaNK5f8m7v"
+ },
+ {
+     "title": "Conference Call",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__MR1gpGQoGY5giE2NVoXfefKJqsaptWKuVvLzp7cHuPGGgsf6U3pCbXuqrakqpEKgGZ65SwomSx"
+ },
+ {
+     "title": "Crazy Times",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__K29ZqEmMyB2tyttsksCBA748WXXyCmrBhtcs3Y8AX5okRMNGtTxnCzoxyPAS78ifgCWcsuBXHL"
+ },
+ {
+     "title": "Erf-Qwak",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__4ogmcP926k1KznaZMJHwCvg3ahi4wdwCzxbgHXrkyrHrWacFUfXuBC7cPMeTeTDhj5tCs9Awgj"
+ },
+ {
+     "title": "Everything From Home",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__KELrEpXvj56T3VQiAbZtyYmi55ZmXAy5LYS15HcLChs3AUX6oSaGrQYqXNmdtmRZsKo3LdZbcM"
+ },
+ {
+     "title": "For SHow",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__KieM1hjs9vVcmHAbd2WbSor1pMqyEq4N8nqqCyWgAH6zzadgfNYxe9UhkGbuUGgdERYMvMntDA"
+ },
+ {
+     "title": "Forgiveness",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__F3sDoDaKudRcj9cz9PhhSndsbWk1sfTee7KudKcAHo8xDePTYmbMCsBU5qk9gwBRyaQm7FR9Js"
+ },
+ {
+     "title": "Head2U",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__LNGfcrss4e93SHxiMMRe4uoVCdLaQxS4PUFuB8LLBNiw1UcWKRPJ6dhYev7XNMdQvQUaenXG4Y"
+ },
+ {
+     "title": "Hendrix Vibes",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__2KVcVbHM4TbCq1ZT7gL7BFbcux5qqGu2pSmwbkNqzvHMTCTSnBRYGEcm3AGHZ2SdF5UzFv5SgF"
+ },
+ {
+     "title": "No Surprises",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__8gmjJusZDCEXjJxVyAw3GXHXb9j66Righqyzx33sSUw6wdNxDe6VXPXqAxRr3Li7XroBAzr5nV"
+ },
+ {
+     "title": "Only God Knows",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__G6X5VcoFgM7YCUiLkVAm34Kn96WQ3kJJsLMCUwNUoVQf9eQ4upgzvxnNyCadSrhKdYLNGzYxNj"
+ },
+ {
+     "title": "Reveal",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__DPQmL8N3dZzyhBMvZMDTKmJcio3QYYcLZP2MGe1ikGLv31L8kHyy4mkvoRssrceszqKY5L45Bq"
+ },
+ {
+     "title": "Shenzhen",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__7MNRHABhyXUwzSfaVsAGFjwovMWxc2oywDmceRAZYNLyGjHEhqpEH3vtKQVssvpgNEetEZUgod"
+ },
+ {
+     "title": "SLow Down",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__E6T7MKuPXBUMmzsG3y476rd6iYi3ebuShAVLwHB4BB9dXZ4Qf6TNoXWH6XVbXMmfiJqvBP7kfW"
+ },
+ {
+     "title": "The Force Snippet",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__BEZ9BNRRpTys6GD8VpjCCZdv2LDFcrZroPTccmGHnmFRz1bMFLsEevwoDMn7XSyQRs7yQVh3Vi"
+ },
+ {
+     "title": "What A Time To Be Alive",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__2DRxe5AoJwFe3VzyK34Tnfjjrr3rphjV9ANMpg8tNi4szkG5ERBoD9Z9CKHf4KmhFyEEkwdvHP"
+ },
+ {
+     "title": "YOU ARE IN DANGER",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__9Hz4ac4NJcGAshAQnyWh1TSDFVuaaedx1KHHJHwY9LXL4mTR4ec2w7XoahQuoYB1CKPVC4cDa4"
+ },
+
+ // batch 5
+
+ {
+     "title": "Ahead Of Me",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__HDhYyDE5Bm3RnLDFUh2ZEgbf6uXSwZbV1taR1Cty57tvDuUoGav9f1qLwB3YEe9ezpWagAM5oi"
+ },
+ {
+     "title": "Arrogant Nerds",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__LQdo8X4zGVoKwakishEFXhGxWQxusyBfoiTFirKLcJ7oHPAjvxjnooeddr2FGiCacEDVdac7Gp"
+ },
+ {
+     "title": "Diggs",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__FE2NiL767Aq1TioVFgXes6P8BqHjcJ2jdGxmTfJC5excGmo7AXa2P1gdvSsSQYwCHm7z4zYt9j"
+ },
+ {
+     "title": "Earth Family Love",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__Cbez9AsgW2MXuS29qHwE5oD5oD7hpPAciNA9qCAL3Bcpa8aMNhUxz9rM4CskZuKArtYwa5h8SH"
+ },
+ {
+     "title": "Enjoy The Moment",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__4HdbKrWCFbyAgeaUS8XLGBBx3UdmBKaAM4DntJc2aisiSq63F5tB7qy3Q2VCjB5wSmNU9jGd4T"
+ },
+ {
+     "title": "Family Ties",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__9FfKHNaev8p4vMDoYteqasooB4e2L5J6ebXzC82WUga2fZnWm1Ua1VJKfvo5sWELjGHHZ9uW6D"
+ },
+ {
+     "title": "Free Music",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__8zDPwcb9DXE65AwtroFvx4zgTt34Re8DCZLvix3WAbDEdtNLivJtZefxUxDHshg5VxsajAhm1W"
+ },
+ {
+     "title": "I Win",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__FpvoK8wzCXa7cewUraVNCN3Y5Q5B4yHbBvvbsG84yAU8c71adbQEWWUMswDmSPB51pPLipo7qV"
+ },
+ {
+     "title": "Leave It Quietly To Him",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__7dttyrNcv8ev9XppubkEkYghjKfW961NNwvhEroeZD4BA59QpJXDPaJ5wxBjgEHH2xDJnkGhVt"
+ },
+ {
+     "title": "MC Squared",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__27ynDmFZ1V7BDQE1yjQH3zcjYDgYqfKcQWpce1suZh8fdkkSpcG3MC8WLvq7C8GXsDcLWmgeQr"
+ },
+ {
+     "title": "Midnight In Vancouver",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__2AkvddXv6YTY39AdUWm2h3xHzP1ygbJaUqhWPkSD7AbvvhHCpQw9fNELKFXbUdMiKnh5RZrMWp"
+ },
+ {
+     "title": "Million Dollar Music",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__HuG3tvuMShKQ4ZpLP1r6wGRARnwmqF8a8rfwm5SjCnrFWifpXhg28c2EXomfbP9sB7XfbsjE9q"
+ },
+ {
+     "title": "Mystery Of Love",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__93hqKfaN84Fus4QqbxSxM87sYNvi4eLREdoqe5EUKfRFqbvDR6RXWQnfTWg7Tg62HdXKMsUevw"
+ },
+ {
+     "title": "Ready Player 3",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__BTGjDd5JsusB3QvygFMsBGEQGqHJxvFN4w7Jg3RVLXkXfedyrZh8nZg4QQ4pPidjn4ciX7Gkuq"
+ },
+ {
+     "title": "Rock & Soul",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__4XeTwoddGGZwQ3GYVmCbLWifwZ1d1ieGsbKWJNLCr2h5dg6hUdCc6K19NYMJd662a3aoPZEh2a"
+ },
+ {
+     "title": "Smart City",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__AB3HQmfk6j7vhi5F2Erntz3krGLheUtAci8Gej9T9GSz3Dhk3ETN8ntSXdjZM47bB9YBggLQJP"
+ },
+ {
+     "title": "Snakes In The Grass",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__8zQJFjc5StQuvFUL1guEpXBXejbYG3uZJZzzZj5zEVF1uWEAMZXwokoUcZ1G4mL3WBVWm39XsF"
+ },
+ {
+     "title": "Spritually Me",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__6YjQ6CnN98xoFxfpbRZa8mBxDWkuDn8zqEK5ayhjzRoaQhQiGT3GxszDa9Kgu7c3ohaerpqsq1"
+ },
+ {
+     "title": "Star People",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__8hZ6C58gYDWDeNhnkwD4aQn7c22mgqNCGyjaadaB91iU8Lms3Yir3ABzBBSMwuweZJGyDsWrTK"
+ },
+ {
+     "title": "What We Got",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__EUWW6asC5dkC2ffRWzNL92jiyTfDLU8uXjUnRYqi3WvxBkcTq3tvcNQyqedroX9EfWZ5vuACnd"
+ },
+     ];
+
+     const selectedSong = songs[Math.floor(Math.random() * songs.length)];
+     const hash = selectedSong.hash;
+     const targetVariable = selectedSong.hash;
+     window.console.log("selectedSong", selectedSong, "hash", hash, "target variable:", targetVariable);
+
+     let matchUrl;
+     
+     for (let i = 0; i < songsdata.length; i++) {
+       if (songsdata[i].hash === targetVariable) {
+         matchUrl = songsdata[i].url;
+         break;
+       }
+     }
+     window.console.log("matchUrl:", matchUrl);
+     var myUrl = matchUrl;
+     var currentLink = document.getElementById("currentLink");
+
+     currentLink.href = myUrl;
+
+     const contentId = selectedSong.hash;
+     const objectId = contentId.startsWith("iq__") ? contentId : "";
+     const versionHash = contentId.startsWith("hq__") ? contentId : "";
+
+     let playoutOptions;
+     if(PLAYER_TYPE === "bitmovin") {
+       playoutOptions = await client.BitmovinPlayoutOptions({
+         objectId,
+         versionHash,
+         protocols: [PROTOCOL],
+         drms: [DRM]
+       });
+
+       LoadBitmovin(playoutOptions);
+     } else {
+       playoutOptions = await client.PlayoutOptions({
+         objectId,
+         versionHash,
+         protocols: [PROTOCOL],
+         drms: [DRM]
+       });
+
+       if(PROTOCOL === "hls") {
+         LoadHlsJs(playoutOptions);
+       } else {
+         LoadDash(playoutOptions);
+       }
+     }
+
+     const ve = document.getElementById("video-element");
+     ve.onended = function() {
+       window.console.log("The clip has ended");
+       playNextTrack();
+     };
+
+   } catch(error) {
+     SetErrorMessage(error.message ? error.message : error);
+     console.error(error);
+   }
+ };
+
+ const SetOptions = (protocol, drm) => {
+   PROTOCOL = protocol;
+   DRM = drm || "";
+
+   UpdateButtons();
+ };
+
+ const SetPlayer = (playerType) => {
+   PLAYER_TYPE = playerType;
+
+   if(playerType === "bitmovin") {
+     document.getElementById("player-configuration").value = JSON.stringify({
+       "live": {
+         "lowLatency": {
+           "targetLatency": 7,
+           "catchup": {
+             "playbackRateThreshold": 0.075,
+             "seekThreshold": 5,
+             "playbackRate": 1.2
+           },
+           "fallback": {
+             "playbackRateThreshold": 0.075,
+             "seekThreshold": 5,
+             "playbackRate": 0.95
+           }
+         }
+       }
+     }, null, 2);
+   } else {
+     document.getElementById("player-configuration").value = "{}";
+   }
+
+   UpdateButtons();
+ };
+
+ // Array method
+ const songsdata = [
         
+// batch 1
+{
+     "title": "Million Dollar Smile",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__BSki1joYvZ5pxc4PAWr2zWxT8A681Vmx3xzTrihC66R5sZMJKzAzC2mA7Wnfc83sdg4r6XcKo7"
+ },
+ {
+     "title": "Never Change",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__Gi3EqZiTJevLqaq83pJCNQGufknyLXMV9RVuj6xGoySmuQAdoAKMfCJvuSfe4FjkNmjXG6vjnR"
+ },
+ {
+     "title": "Emotions",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__6M9FiipqT2uMZ7SzRLAkPv6kD6S2jYHS9gVf1Ciw9V1nNWBaXW2yHYLEzTdZQvtL3LvRaQoyQe"
+ },
+ {
+     "title": "My People",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__CztBhAG64BvAT4UbEhvMunNXELkHw3Pps8wa8ZDDyD6TAcEAkRSutc2sTEVU3mSgjbqXvnR782"
+ },
+ {
+     "title": "Music Life",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__JNVfsjkigT8AAwNuJsSGzZybvJe6veB9VmjoKXTVgqjGUvYUUjZVwXszjZGQKwn6u4edi8WyDx"
+ },
+ {
+     "title": "By Any Means",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__Y1h44dKaF5nkVSy1iJy1rdZnYHq7pz5AuXRgMAbiJ3bER8a41JoNzrqCpHPn1CZP5YyfAkoZQ"
+ },
+ {
+     "title": "Lucky You",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__8eBYhtoDRst2XBfyacitZRuRKmhbXneTiNWkXcrqndRVysrWDUeknYDgQLagdxSwML3b3fvozY"
+ },
+ {
+     "title": "Dreaming Tree Intro",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__Ce8zpFC84JdD4Hruba6aSJ5jPZUHcEPHpmgeyWamDaqAbcDLjPijK4mZEhk5E6UBLh9cPxxazy"
+ },
+ {
+     "title": "ATL Visions",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__3nFJYi2y2RtQL9pxuJCtDV4YxrwA2qHEvWrwLkXRBKBBvM8iPXeYmqSa4WXoHifBjfyrw5TTNU"
+ },
+ {
+     "title": "Beirut Explosion",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__6G3aYKqeLMFySMcTY1TMdEKsvzK4ipsMA5iF9fXFQr6g99aAPPNc2BbDXnJ472EMWJVrsTB59u"
+ },
+ {
+     "title": "Breathe of Fresh",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__MTuMKd8qpPZGMZrM1CPmF4KRDjmy2ELSXcpAtc33ATgtf7nRKcQ6p2VkNCDoZaTL5hKz5x6bNM"
+ },
+ {
+     "title": "Angels Stadium",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__KintEcLxmPYTRDrhQuvds1yELdJCWE4umis1WzocE8if3KhNue66tARPxCSk9YMGro3BvrSXBL"
+ },
+ {
+     "title": "LAYAWAY",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__LMfBziXSxjGd22ssLft7hjRut3tfAh24y2DhjUHZZkzna94C1rwo9uSgL3QaJwSoKnvtnNQp3p"
+ },
+ {
+     "title": "How Wonderful",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__MYhWdXkbSxAh8e2qRmWBUXMfg5soErGzffDENhd65R3dz41hXqVTr42cE52tjgUvjtVdX6M4K9"
+ },
+ {
+     "title": "Birds in the Garden",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__7QBnDfFYPEaNLfZWwT6xvsPodjzT41Aam3aDdsV7AKLrLPW1D31oWUUV26e1dfv4kBdSXiDT3j"
+ },
+ {
+     "title": "Greens & Things",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__8GpYQ72mz6zJ42yB8Hnt4JuVzNLcfTCvaNJ4nPeq33igPT8YYg8s5Z898grEiVusDZ7XZ9eEwk"
+ },
+ {
+     "title": "Arithmetic",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__BXqQ2kjoQFwqmeBCPsCP88krWnsNtsbo5RJiY7H3Kj6N13Xtz58beZKEsRHtGdfsPVvMV1S3Bi"
+ },
+ {
+     "title": "Locust",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__8BBwAyMuVLdKuAAtrcNWd14mA1t1xYxTUypa28W8dSRMiqgr6ktj1kNEQkpLjRBNCb86knFCoL"
+ },
+ {
+     "title": "Drone",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__7pXXbAY35V8wAuchxYLv5PEmT7hh4rm6yWF5xodTz7RegVqhDZpsKfqQVJztW3qeKDmpe6xjkc"
+ },
+ {
+     "title": "F_CK2020",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/Gr1RJ76W34721tpr9n1TxC",
+     "hash": "hq__7KwBr8o67aKcDPHtbenqHLWQff7kNdBHU9nLLuVgm75Mj1MheoYo2mXe3kQrCbyAEES7NjeyR5"
+ },
+
+ // batch 2
+
+ {
+     "title": "2am In LA",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__4Dw5fkHeLAcUkyZEsYbmfQ1AqL9yG8vuLink5gosL3FnWDshVw3mro8nmPEqJAX1G6xYgnXey1"
+ },
+ {
+     "title": "Black Panther",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__5B3Xnt3cEkkr3mJYX6tJtTZLGZcTn16UrUpVA2L53y2sqGiwYEFP26VHkGqe7vXErJwSQBh5Cz"
+ },
+ {
+     "title": "Chitty Bang",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__FeyxcpPRARChESYdVVZCQFLaHX5bMMBXcVfrAw3nesQXwifxt2SxwFPGDtAbMW7X3J96hAAg14"
+ },
+ {
+     "title": "Coming",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__KcoSsGz8pKrgfKTio4hhEAWt9crPkJnzMW4hZYYjJkdcznpFL4g8UEkRZz81KhUh25Mo53m7dp"
+ },
+ {
+     "title": "HeadRoll",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__G1t6B6r23fx8xoBtu1dWA3jL9yuZMF7zzXosEo5zwwGH4yEVwhV6v1d8CCoPzwWMNE6FVAAHCF"
+ },
+ {
+     "title": "I'm Yours",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__F7BXRRV5sYx9FJv932tb1fcsxkJktb5LvFN1Yro2RfE9u5VmqunixdqADTtqmuU7aNAMYnEqgK"
+ },
+ {
+     "title": "New Africa",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__9TpRgQWThsRqPwRudR3dKZffFRsAbgSpMvgXguCADDgwt7Hpi2fbUZpHbCaxsbejknAuwLzhR6"
+ },
+ {
+     "title": "Nigerian Love",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__3FkrE3i4e873G3uWc6B6VCK7o97WNbgXKtBcQWwPmzSittQdtLZ3XdKdFQZAWgdB1FizRpbPx5"
+ },
+ {
+     "title": "Others",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__9LgWodoydEfqqVB1cZLxfDrbnqe52j64GpkgRo3NMX825sa1xkWrbDYzuRwFrgbR8mE89mGrv"
+ },
+ {
+     "title": "Rhetoric",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__BqwY621RMd7ccaJChqGkxooEbPcJQ5xJAfV2vesFRCynn4Ca5VEgr8StngiLzuh9QmJQZQWJzh"
+ },
+ {
+     "title": "Soul For A Soul",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__5a6QBjz5gCk7vaPr7TDD3kuQge9MYrQZdD62nny7Zyi7xEcc8xujvRv3zEBMWhJvf4ZRjTTULz"
+ },
+ {
+     "title": "Sundae Vibes",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__EXViNii4u6KTdnny3cRD2wjNuCHjVESkZpYGr7Wb3NGUWxYxoJKWVqRrrS2aGDZkkp9tVQ7HU4"
+ },
+ {
+     "title": "Thanos",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__3t7nhrJ2RJzuJATzKmXyUE8BLhrLMwmCQTc3qgrPrnM75qKpjAqgRSc4fG7kHVTvnuXLTojP16"
+ },
+ {
+     "title": "Thoughts of He",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__6yoi7Ry8bMLi4ugt4Uy6hnqcDwfmnMyPHwwBfHGnshkesa6fa6zMwKmBUFjpG9nntbaMJdZ8pb"
+ },
+ {
+     "title": "Tomorrow",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__CYoh1HjHjC3hmZXhYNpo6RWGXww78fAYPM4AnusYTvhoy31JqJWWJTT4PvNYDhFkyAn14BTMAq"
+ },
+ {
+     "title": "Tortoise",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__DeuKkpkMLM4g7PTaqcLDdTtHnursDzHhD5zGaH54FpuDPDgui3gGbrbsuaSxBkd5ERaXEobxu8"
+ },
+ {
+     "title": "TRAP JAZZ",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__ERzpuksdQei1kU4qsYjoS34x4naiGCivjQhvhTHpRDuQdpMs69qYNa34QYCaPpzTaqDTaphE7v"
+ },
+ {
+     "title": "Undefind",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__54KQuJbN9Fj8z5hAegxBwiaoqKC6hf3VjtNWJgcw2VGjH65zwE7MPtz5yqYKQiZLdEkS54CGf2"
+ },
+ {
+     "title": "Weedemic",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__GN1CrpvR7okpp2gQfGpLCjrkcCLXFoPGYEVGdyMYpXSjmZApQHL3oKg8hkCwUhY1pxcTSXpjhY"
+ },
+ {
+     "title": "Wonder Bread",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/3EoxmjnFDPMxxvqS1ZyeR8",
+     "hash": "hq__7WvXFrq4qSFYvAScGbmBoSw2PchgCCPHtdDzCSo1pLqUfQccUqdyn3d4YtsMAYZCkV4m5xu4kR"
+ },
+
+ // batch 3
+
+ {
+     "title": "432HZ",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__FjC9YD5eTGL2CQgKihtxTW8UMoFX79hvARc4t5qavEaeDCmeJ3aCSEPxkwEwLVevtdoBEZk62J"
+ },
+ {
+     "title": "After Shook",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__87Fkgp6DGMj4ooiTkx1NaoenR3dN3JatMiCRhL3aR4S5j7BuWyYGvwcSxbbu6ya4css6jQ1J1E"
+ },
+ {
+     "title": "Bad Baby",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__5BinocKtiHf6nVU7urZEZSEGBdMagUgPbLDdzMCGjZGXj9bgPyTZpeh73quXPAijhqFmXkjDZy"
+ },
+ {
+     "title": "Car Model",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__CwjxeN4SwgnTDij6QVL9rZDfqHXu48imFXvc8Ezfk24A6UFnJqX8ngaSAjsJk7sXdr6T1LBPep"
+ },
+ {
+     "title": "Life Force",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__3cTFWCKgPVA3QgJwrtH2bPzojwhzNafXv9Sc7YLMdwAzMkCRcrcLpBuvwoZED21pgt15ibdKkV"
+ },
+ {
+     "title": "Like Water",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__43T6VDEiB62aEx9Hd6W5yeuW1EWfK1S8123678oFE1XccYbDqfoMBnbVWyq9D3V6Rh4AhqRVVD"
+ },
+ {
+     "title": "Long Day Still Going",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__44d2pgvrfAehRAenuAkYebXMawSKAak9MvNi7cipPaXRPbFzgbSPzcTjHsroDZ4mt8oYY3znSj"
+ },
+ {
+     "title": "Neon Kids",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__6niPKXiVPeQmPPnf4WvXPUzRPYBaawN8RBDct5nVwJkCyBLKbUhf5dSpvZdmrygnV9vcCpWMdA"
+ },
+ {
+     "title": "Only In Japan",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__BbSa1yq56CSDqDpZRTRYUtWKf7Z318KDCWga9PK7hhSZ3wqmuKsE4xaRFRgyVfR7eHMcia9cn6"
+ },
+ {
+     "title": "Pianos Of Life",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__2hUQ85NwP6B3MvvoRBgjSJRytWMgKUiYXVynm88NrpQ3GgEB6UWMkCvLSfVo5tNRFeRy7tLVvk"
+ },
+ {
+     "title": "Pray For Me",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__2JNs5ErBdpJY4P2obZsXAyVekMQDhGFfhxGAfiCTgCK267yd89VCxEQsQJ2YzE43hXeSCiWNZX"
+ },
+ {
+     "title": "RYBE",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__9HpkYsbAgDbM8mTMaZ8J2qQdjvU4earKTypbsNJKdyKdbQfSA1Ckzdj1V6fGTC4JMcuFncrNrp"
+ },
+ {
+     "title": "Science Fiction",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__R1vvWNG5QnaTb7xQxMkJfNvUuauc6c6sewnuAB7JLs24HCAMUdVvVbu6bVGjZbzKShzEdq4aG"
+ },
+ {
+     "title": "Special Ones",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__2HFbSZM4ZvWB9n752aY2tiJvyqH4MeYTBLavXp52ht3WLa8bMbBCtJhwxxzCRUJTo3WB29s1xp"
+ },
+ {
+     "title": "Stalyon",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__AsEzySedNZmsQNNcnr9DoRDacJ33efRg11NVyLdhcczKAsvYQmNpACyFaLSm4ao2rJRuLN6PvT"
+ },
+ {
+     "title": "Sweet Dream",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__JoBQrKkkb14eMGThAuUYPimp1ZKGo2noKkJgKSSpLYEDd2WQvEWTQRrmVrWr94yZGg7oVdE2uG"
+ },
+ {
+     "title": "SWV",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__KtW9vjVAUm9kyPbZVL7fiUpQKSQg9Zs4XHBsotM4QpXrc1zPrDEZ1pnGyoQCK2rnjLEka6PPD2"
+ },
+ {
+     "title": "Tongue&Cheek",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__8zJCK5dUryBY4yUnoUsrLZkrNgEBiEFMj6R3io3Hse5q3KTMBL5cpWM1P7MioaQ5FiryjFLpqv"
+ },
+ {
+     "title": "Unsolved Mysteries",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__Kscj6cpy7jKg19nD6AoDbSFwiQpv83WPNJ49VjmC8WNQat2fFc2ymTrGx7uwV8hZydGTDPuhip"
+ },
+ {
+     "title": "Wave Runner",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/NyTbc1nsXeDFGu9bYvnhem",
+     "hash": "hq__3odbcdSYGPT1GGBdttiwo3nEPLBNv4SSo7gV1AxfYD7iGqwdym81Ai3KrFPnXcBwaeKaQmxk1j"
+ },
+
+ // batch 4
+
+ {
+     "title": "BELIEVE NOTHING",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__8RNNoxYdEgyW7ysRjoUmkZfLruGcQg4ErXyGxWHG9mwnUBR7qmKtnUPxJshkuLcUYmJPut64Bp"
+ },
+ {
+     "title": "Beloved",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__3GtfuEtKADazXQ2mpz3pua2gwjjP2hxLxaThLDziKLLKBhxBnsZVKctbQLWxNPsGDXcV8SxmNP"
+ },
+ {
+     "title": "Clamp Down",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__ES8jbfqjtBSj5JvXtJzJ4VtM6zXpfXgMqcqP1GEnN1PmFQjgDtPMXEDRyyZbFKf7eipPVt5Mtk"
+ },
+ {
+     "title": "Computer Gods",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__4vSM81PkaJTwFCVeJj6jGcP7e9cZu73Rd39ShX8U6PgXiNPgcCggVkrq8ZCcXPogjaNK5f8m7v"
+ },
+ {
+     "title": "Conference Call",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__MR1gpGQoGY5giE2NVoXfefKJqsaptWKuVvLzp7cHuPGGgsf6U3pCbXuqrakqpEKgGZ65SwomSx"
+ },
+ {
+     "title": "Crazy Times",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__K29ZqEmMyB2tyttsksCBA748WXXyCmrBhtcs3Y8AX5okRMNGtTxnCzoxyPAS78ifgCWcsuBXHL"
+ },
+ {
+     "title": "Erf-Qwak",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__4ogmcP926k1KznaZMJHwCvg3ahi4wdwCzxbgHXrkyrHrWacFUfXuBC7cPMeTeTDhj5tCs9Awgj"
+ },
+ {
+     "title": "Everything From Home",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__KELrEpXvj56T3VQiAbZtyYmi55ZmXAy5LYS15HcLChs3AUX6oSaGrQYqXNmdtmRZsKo3LdZbcM"
+ },
+ {
+     "title": "For SHow",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__KieM1hjs9vVcmHAbd2WbSor1pMqyEq4N8nqqCyWgAH6zzadgfNYxe9UhkGbuUGgdERYMvMntDA"
+ },
+ {
+     "title": "Forgiveness",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__F3sDoDaKudRcj9cz9PhhSndsbWk1sfTee7KudKcAHo8xDePTYmbMCsBU5qk9gwBRyaQm7FR9Js"
+ },
+ {
+     "title": "Head2U",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__LNGfcrss4e93SHxiMMRe4uoVCdLaQxS4PUFuB8LLBNiw1UcWKRPJ6dhYev7XNMdQvQUaenXG4Y"
+ },
+ {
+     "title": "Hendrix Vibes",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__2KVcVbHM4TbCq1ZT7gL7BFbcux5qqGu2pSmwbkNqzvHMTCTSnBRYGEcm3AGHZ2SdF5UzFv5SgF"
+ },
+ {
+     "title": "No Surprises",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__8gmjJusZDCEXjJxVyAw3GXHXb9j66Righqyzx33sSUw6wdNxDe6VXPXqAxRr3Li7XroBAzr5nV"
+ },
+ {
+     "title": "Only God Knows",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__G6X5VcoFgM7YCUiLkVAm34Kn96WQ3kJJsLMCUwNUoVQf9eQ4upgzvxnNyCadSrhKdYLNGzYxNj"
+ },
+ {
+     "title": "Reveal",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__DPQmL8N3dZzyhBMvZMDTKmJcio3QYYcLZP2MGe1ikGLv31L8kHyy4mkvoRssrceszqKY5L45Bq"
+ },
+ {
+     "title": "Shenzhen",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__7MNRHABhyXUwzSfaVsAGFjwovMWxc2oywDmceRAZYNLyGjHEhqpEH3vtKQVssvpgNEetEZUgod"
+ },
+ {
+     "title": "SLow Down",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__E6T7MKuPXBUMmzsG3y476rd6iYi3ebuShAVLwHB4BB9dXZ4Qf6TNoXWH6XVbXMmfiJqvBP7kfW"
+ },
+ {
+     "title": "The Force Snippet",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__BEZ9BNRRpTys6GD8VpjCCZdv2LDFcrZroPTccmGHnmFRz1bMFLsEevwoDMn7XSyQRs7yQVh3Vi"
+ },
+ {
+     "title": "What A Time To Be Alive",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__2DRxe5AoJwFe3VzyK34Tnfjjrr3rphjV9ANMpg8tNi4szkG5ERBoD9Z9CKHf4KmhFyEEkwdvHP"
+ },
+ {
+     "title": "YOU ARE IN DANGER",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/YUX6UEpNkwcVmyZg9u6hbf",
+     "hash": "hq__9Hz4ac4NJcGAshAQnyWh1TSDFVuaaedx1KHHJHwY9LXL4mTR4ec2w7XoahQuoYB1CKPVC4cDa4"
+ },
+
+ // batch 5
+
+ {
+     "title": "Ahead Of Me",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__HDhYyDE5Bm3RnLDFUh2ZEgbf6uXSwZbV1taR1Cty57tvDuUoGav9f1qLwB3YEe9ezpWagAM5oi"
+ },
+ {
+     "title": "Arrogant Nerds",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__LQdo8X4zGVoKwakishEFXhGxWQxusyBfoiTFirKLcJ7oHPAjvxjnooeddr2FGiCacEDVdac7Gp"
+ },
+ {
+     "title": "Diggs",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__FE2NiL767Aq1TioVFgXes6P8BqHjcJ2jdGxmTfJC5excGmo7AXa2P1gdvSsSQYwCHm7z4zYt9j"
+ },
+ {
+     "title": "Earth Family Love",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__Cbez9AsgW2MXuS29qHwE5oD5oD7hpPAciNA9qCAL3Bcpa8aMNhUxz9rM4CskZuKArtYwa5h8SH"
+ },
+ {
+     "title": "Enjoy The Moment",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__4HdbKrWCFbyAgeaUS8XLGBBx3UdmBKaAM4DntJc2aisiSq63F5tB7qy3Q2VCjB5wSmNU9jGd4T"
+ },
+ {
+     "title": "Family Ties",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__9FfKHNaev8p4vMDoYteqasooB4e2L5J6ebXzC82WUga2fZnWm1Ua1VJKfvo5sWELjGHHZ9uW6D"
+ },
+ {
+     "title": "Free Music",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__8zDPwcb9DXE65AwtroFvx4zgTt34Re8DCZLvix3WAbDEdtNLivJtZefxUxDHshg5VxsajAhm1W"
+ },
+ {
+     "title": "I Win",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__FpvoK8wzCXa7cewUraVNCN3Y5Q5B4yHbBvvbsG84yAU8c71adbQEWWUMswDmSPB51pPLipo7qV"
+ },
+ {
+     "title": "Leave It Quietly To Him",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__7dttyrNcv8ev9XppubkEkYghjKfW961NNwvhEroeZD4BA59QpJXDPaJ5wxBjgEHH2xDJnkGhVt"
+ },
+ {
+     "title": "MC Squared",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__27ynDmFZ1V7BDQE1yjQH3zcjYDgYqfKcQWpce1suZh8fdkkSpcG3MC8WLvq7C8GXsDcLWmgeQr"
+ },
+ {
+     "title": "Midnight In Vancouver",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__2AkvddXv6YTY39AdUWm2h3xHzP1ygbJaUqhWPkSD7AbvvhHCpQw9fNELKFXbUdMiKnh5RZrMWp"
+ },
+ {
+     "title": "Million Dollar Music",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__HuG3tvuMShKQ4ZpLP1r6wGRARnwmqF8a8rfwm5SjCnrFWifpXhg28c2EXomfbP9sB7XfbsjE9q"
+ },
+ {
+     "title": "Mystery Of Love",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__93hqKfaN84Fus4QqbxSxM87sYNvi4eLREdoqe5EUKfRFqbvDR6RXWQnfTWg7Tg62HdXKMsUevw"
+ },
+ {
+     "title": "Ready Player 3",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__BTGjDd5JsusB3QvygFMsBGEQGqHJxvFN4w7Jg3RVLXkXfedyrZh8nZg4QQ4pPidjn4ciX7Gkuq"
+ },
+ {
+     "title": "Rock & Soul",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__4XeTwoddGGZwQ3GYVmCbLWifwZ1d1ieGsbKWJNLCr2h5dg6hUdCc6K19NYMJd662a3aoPZEh2a"
+ },
+ {
+     "title": "Smart City",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__AB3HQmfk6j7vhi5F2Erntz3krGLheUtAci8Gej9T9GSz3Dhk3ETN8ntSXdjZM47bB9YBggLQJP"
+ },
+ {
+     "title": "Snakes In The Grass",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__8zQJFjc5StQuvFUL1guEpXBXejbYG3uZJZzzZj5zEVF1uWEAMZXwokoUcZ1G4mL3WBVWm39XsF"
+ },
+ {
+     "title": "Spritually Me",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__6YjQ6CnN98xoFxfpbRZa8mBxDWkuDn8zqEK5ayhjzRoaQhQiGT3GxszDa9Kgu7c3ohaerpqsq1"
+ },
+ {
+     "title": "Star People",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__8hZ6C58gYDWDeNhnkwD4aQn7c22mgqNCGyjaadaB91iU8Lms3Yir3ABzBBSMwuweZJGyDsWrTK"
+ },
+ {
+     "title": "What We Got",
+     "url": "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/98gJAgYrxnTvfY4kcecS2R",
+     "hash": "hq__EUWW6asC5dkC2ffRWzNL92jiyTfDLU8uXjUnRYqi3WvxBkcTq3tvcNQyqedroX9EfWZ5vuACnd"
+ },
+     ];
+
+ // cant figure out how to use javascript to find the url that matches the variable "hash" in the array
+ const arrayUrl = songsdata[0].url
+ window.console.log("array url", arrayUrl);
+
+ 
+ // create the sku variable
+ const sku = "selectedSong.sku" 
+ // need to swap "selectedSong.sku" with the data from the eluvio object that is the sku
+ window.console.log("sku", sku);
+
+ // create the eluvio URL
+ // NOTES: selectedSong will pull the track in the player but we now need to unpack the metadata to get the SKU. might need to make an id variable and assign the selectedSong.sku to it, then use that below instead.
+ function generateLink(sku) {
+ var url = "https://wallet.preview.contentfabric.io/?preview=iq__PoyQD1L385EWHguKYvGNUbpyXbP&mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/" + sku;
+ return url;
+ }
+
+ // create currentUrl variable which is the URL of the song in the player
+ const currentUrl =  generateLink();
+ window.console.log("selectedLink", currentUrl);
+
+ document.getElementById("select-hls-dash").onclick = () => SetPlayer("hls-dash");
+ document.getElementById("select-bitmovin").onclick = () => SetPlayer("bitmovin");
+
+ document.getElementById("load-hls").onclick = () => SetOptions("hls", "clear");
+ document.getElementById("load-hls-aes").onclick = () => SetOptions("hls", "aes-128");
+ document.getElementById("load-hls-sample-aes").onclick = () => SetOptions("hls", "sample-aes");
+ document.getElementById("load-hls-fairplay").onclick = () => SetOptions("hls", "fairplay");
+ document.getElementById("load-dash").onclick = () => SetOptions("dash", "clear");
+ document.getElementById("load-dash-wv").onclick = () => SetOptions("dash", "widevine");
+
+ playNextTrack()
+
+ UpdateButtons();
+
+ generateLink();
+
+
+</script>
+
+</div>
+</section>
+<!-- /TEAM SECTION -->
+     
         
         
         
