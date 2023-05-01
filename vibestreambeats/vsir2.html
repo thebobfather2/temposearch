@@ -1,0 +1,489 @@
+how do i rewrite this for a .js page in react? <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Vibe Stream Beats | VSIR Interactive Radio</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <!-- ELUVIO -->
+    <link href="https://fonts.googleapis.com/css?family=Dosis" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          crossorigin="anonymous" />
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" href="images/favicon.png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+	<!-- LOADING FONTS AND ICONS -->
+		<link href="https://fonts.googleapis.com/css?family=Raleway%3A800%2C500%2C400" rel="stylesheet" property="stylesheet" type="text/css" media="all" />
+
+		
+		<link rel="stylesheet" type="text/css" href="revolution/fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css">
+		<link rel="stylesheet" type="text/css" href="revolution/fonts/font-awesome/css/font-awesome.css">
+		
+		<!-- REVOLUTION STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" href="revolution/css/settings.css">
+		<!-- REVOLUTION LAYERS STYLES -->
+		
+
+			<link rel="stylesheet" type="text/css" href="revolution/css/layers.css">
+			
+			<!-- REVOLUTION NAVIGATION STYLES -->
+			<link rel="stylesheet" type="text/css" href="revolution/css/navigation.css">
+			
+			<!-- FONT AND STYLE FOR BASIC DOCUMENTS, NO NEED FOR FURTHER USAGE IN YOUR PROJECTS-->
+			<link href="https://fonts.googleapis.com/css?family=Roboto%3A700%2C300" rel="stylesheet" property="stylesheet" type="text/css" media="all" />
+			
+	
+    <!-- Reset -->
+    <link href="css/reset.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- CSS -->
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/eleganticons.css" rel="stylesheet">
+    <link href="css/jquery.mmenu.all.css" rel="stylesheet">  
+    <link href="css/magnific-popup.css" rel="stylesheet"> 
+    <link href="css/swiper.min.css" rel="stylesheet"> 
+    <link href="css/owl.carousel.css" rel="stylesheet"> 
+    <link href="css/owl.transitions.css" rel="stylesheet">
+    <link href="css/YTPlayer.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <!-- VSIR stylesheet -->
+    <link href="css/vsir.css" rel="stylesheet">
+    <!-- Style -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/color.css" rel="stylesheet">
+    <link href="css/color-lightskyblue.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+    <!-- ELUVIO STUFF -->
+    <!-- hls.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- elv-client-js -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@eluvio/elv-client-js@latest/dist/ElvClient-min.js"></script>
+
+
+</head>
+
+
+    <!-- IGNORE BELOW its hidden code from eluvio -->
+        <div id="error-message"></div>
+        <div class="controls"style="display: none;">
+        <div id="bitrate"></div>
+    <!-- hide buttons -->
+    <div class="actions" style="display: none;">
+      <button id="select-hls-dash">hls.js / dashjs</button>
+      <button id="select-bitmovin">Bitmovin</button>
+    </div>
+
+    <!-- hide display of buttons -->
+    <div class="actions" style="display: none;">
+      <button id="load-hls">Play HLS Clear</button>
+      <button id="load-hls-aes">Play HLS AES-128</button>
+      <button id="load-hls-sample-aes">Play HLS Sample AES</button>
+      <button id="load-hls-fairplay">Play HLS FairPlay</button>
+      <button id="load-dash">Play Dash Clear</button>
+      <button id="load-dash-wv">Play Dash Widevine</button>
+    </div>
+
+    <!-- hide input display -->
+    <div class="input-container" style="display: none;">
+      <input
+        id="config-url"
+        value="https://main.net955305.contentfabric.io/config"
+        placeholder="Config URL">
+    </div>
+
+    <!-- hide config -->
+    <div class="input-container" style="display: none;">
+      <label for="player-configuration">Player Configuration</label>
+      <textarea id="player-configuration" placeholder="Player Configuration"></textarea>
+    </div>
+
+    <!-- hide action buttons -->
+    <div class="actions" style="display: none;">
+      <button class="active" id="load-button">Load</button>
+    </div>
+  </div>
+
+    <script type="module">
+        import {InitializeFairPlayStream} from "./FairPlay.js";
+    
+        let PROTOCOL = "hls";
+        let DRM = "clear";
+        let PLAYER_TYPE = "hls-dash";
+        let player;
+    
+        const SetErrorMessage = (message) => {
+          document.getElementById("error-message").innerText = message;
+        };
+    
+        const PlayerConfiguration = () => {
+          try {
+            const configuration = document.getElementById("player-configuration").value.trim();
+    
+            if(!configuration) { return {}; }
+    
+            return JSON.parse(configuration);
+          } catch(error) {
+            SetErrorMessage("Unable to parse player configuration");
+            return {};
+          }
+        };
+    
+        const UpdateButtons = () => {
+          [
+            "select-hls-dash",
+            "select-bitmovin",
+            "load-hls",
+            "load-hls-aes",
+            "load-hls-sample-aes",
+            "load-hls-fairplay",
+            "load-dash",
+            "load-dash-wv"
+          ].forEach(id => document.getElementById(id).className = "");
+    
+          if(PLAYER_TYPE === "bitmovin") {
+            document.getElementById("select-bitmovin").className = "active";
+          } else {
+            document.getElementById("select-hls-dash").className = "active";
+          }
+    
+          let activeOption;
+          if(PROTOCOL === "hls") {
+            if(DRM === "aes-128") {
+              activeOption = "load-hls-aes";
+            } else if(DRM === "sample-aes") {
+              activeOption = "load-hls-sample-aes";
+            } else if(DRM === "fairplay") {
+              activeOption = "load-hls-fairplay";
+            } else {
+              activeOption = "load-hls";
+            }
+          } else {
+            if(DRM === "widevine") {
+              activeOption = "load-dash-wv";
+            } else {
+              activeOption = "load-dash";
+            }
+          }
+    
+          document.getElementById(activeOption).className = "active";
+          
+          document.getElementById("nextButton").onclick = function () {
+            console.log("play next track");
+            playNextTrack();
+          };
+        };
+    
+        const DestroyPlayer = () => {
+          // Stop current player
+          if(player) {
+            player.unload ? player.unload() : (player.destroy ? player.destroy() : player.reset());
+          }
+    
+          // Remove video element
+          const existingElement = document.getElementById("video-element");
+          if(existingElement) {
+            document.body.removeChild(existingElement);
+          }
+    
+          document.getElementById("bitrate").innerHTML = "";
+        };
+    
+        const CreatePlayerElement = () => {
+          DestroyPlayer();
+    
+          let playerElement;
+          if(PLAYER_TYPE === "bitmovin") {
+            // Bitmovin is attached to a 'div' element, not a 'video' element
+            playerElement = document.createElement("div");
+          } else {
+            playerElement = document.createElement("video");
+            playerElement.controls = true;
+            playerElement.autoplay = true;
+          }
+    
+          playerElement.id = "video-element";
+    
+          document.body.prepend(playerElement);
+    
+          return playerElement
+        };
+    
+        const LoadHlsJs = (playoutOptions) => {
+          const playoutMethods = playoutOptions.hls.playoutMethods;
+    
+          let playoutInfo;
+          if(DRM === "aes-128") {
+            playoutInfo = playoutMethods["aes-128"];
+          } else if(DRM === "sample-aes") {
+            playoutInfo = playoutMethods["sample-aes"];
+          } else {
+            playoutInfo = playoutMethods.clear;
+          }
+    
+          if(!playoutInfo) {
+            SetErrorMessage(`HLS ${DRM} playout not supported for this content`);
+            return;
+          }
+    
+          const playerElement = CreatePlayerElement();
+    
+          // Use native player for Sample AES and FairPlay
+          if((DRM === "sample-aes" && PLAYER_TYPE !== "bitmovin") || !Hls.isSupported()) {
+            playerElement.src = playoutInfo.playoutUrl;
+            return;
+          } else if(DRM === "fairplay" && PLAYER_TYPE !== "bitmovin") {
+            InitializeFairPlayStream({playoutOptions, video: playerElement});
+            return;
+          }
+    
+          player = new Hls(PlayerConfiguration());
+          player.loadSource(playoutInfo.playoutUrl);
+          player.attachMedia(playerElement);
+        };
+    
+        const LoadDash = (playoutOptions) => {
+          const playoutMethods = playoutOptions.dash.playoutMethods;
+    
+          let playoutInfo, licenseServer;
+          if(DRM === "widevine") {
+            playoutInfo = playoutMethods.widevine;
+    
+            if(playoutInfo) {
+              licenseServer = playoutMethods.widevine.drms.widevine.licenseServers[0];
+            }
+          } else {
+            // Play clear
+            playoutInfo = playoutMethods.clear;
+          }
+    
+          if(!playoutInfo) {
+            SetErrorMessage(`Dash ${DRM} playout not supported for this content`);
+            return;
+          }
+    
+          const playerElement = CreatePlayerElement();
+          player = dashjs.MediaPlayer().create();
+          player.setProtectionData({
+            "com.widevine.alpha": {
+              "serverURL": licenseServer
+            }
+          });
+    
+          player.initialize(playerElement, playoutInfo.playoutUrl);
+    
+          player.updateSettings(PlayerConfiguration());
+    
+          player.on(dashjs.MediaPlayer.events.QUALITY_CHANGE_RENDERED, () => {
+            const currentLevel = player.getBitrateInfoListFor("video")[player.getQualityFor("video")];
+    
+            document.getElementById("bitrate").innerHTML = `${currentLevel.width}x${currentLevel.height} | ${currentLevel.bitrate / 1000 / 1000} Mbps`;
+          });
+        };
+    
+        const LoadBitmovin = (playoutOptions) => {
+          const playerElement = CreatePlayerElement();
+    
+          const config = {
+            key: "532a4784-591a-4039-8497-5feb80e5dd66",
+            playback: {
+              autoplay: true
+            },
+            events: {
+              [bitmovin.player.PlayerEvent.VideoPlaybackQualityChanged]: ({targetQuality}) => {
+                document.getElementById("bitrate").innerHTML =
+                  `${targetQuality.width}x${targetQuality.height} | ${targetQuality.bitrate / 1000 / 1000} Mbps`;
+              }
+            },
+            ...PlayerConfiguration()
+          };
+    
+          player = new bitmovin.player.Player(playerElement, config);
+    
+          player.load(playoutOptions).catch(
+            (error) => {
+              DestroyPlayer();
+              if(error.name === "SOURCE_NO_SUPPORTED_TECHNOLOGY") {
+                SetErrorMessage(`${PROTOCOL} ${DRM} playout not supported for this content`);
+              } else {
+                SetErrorMessage(`Bitmovin error: ${error.name}`);
+                console.error(error);
+              }
+            }
+          );
+        };
+        const playNextTrack = async () => {
+          SetErrorMessage("");
+    
+          try {
+            const client = await ElvClient.FromConfigurationUrl({
+              configUrl: document.getElementById("config-url").value
+            });
+            window.client = client;
+
+            await client.SetStaticToken({
+              token: client.utils.B64(JSON.stringify({qspace_id: await client.ContentSpaceId()}))
+            });
+
+            let playlist = await client.ContentObjectMetadata({
+              libraryId: "ilib3PBhfL7TEdhaHjnhLMwhAoiwnUp7",
+              objectId: "iq__2X6yb9XGgr1X6eGcNe5ssXY1AuxY",
+              versionHash: "hq__Lvvt745s8XUyUPAbo2xtmv7uUSt58PEgfkmHyfarwCXb6deAH5HNVvh3fMjvMjSz22CcbjTh72",
+              "metadataSubtree": "public/asset_metadata/titles",
+              "resolveLinks": true, "resolveIgnoreErrors": true, "resolveIncludeSource": true,
+            });
+            window.console.log("playlist", playlist);
+    
+            let songs = [];
+            for (let [_, song] of Object.entries(playlist)) {
+              for (let slug of Object.keys(song)) {
+                const title = song[slug]["display_title"];
+                const hash = song[slug]["."]["source"];
+                songs.push({ "title": title, "hash": hash });
+              }
+            }
+
+
+            const selectedSong = songs[Math.floor(Math.random() * songs.length)];
+            const hash = selectedSong.hash;
+            const targetVariable = selectedSong.hash;
+            window.console.log("selectedSong", selectedSong, "hash", hash, "target variable:", targetVariable);
+    
+            let matchUrl;
+            
+            for (let i = 0; i < songsdata.length; i++) {
+              if (songsdata[i].hash === targetVariable) {
+                matchUrl = songsdata[i].url;
+                break;
+              }
+            }
+            window.console.log("matchUrl:", matchUrl);
+            var myUrl = matchUrl;
+            var currentLink = document.getElementById("currentLink");
+    
+            currentLink.href = myUrl;
+    
+            const contentId = selectedSong.hash;
+            const objectId = contentId.startsWith("iq__") ? contentId : "";
+            const versionHash = contentId.startsWith("hq__") ? contentId : "";
+    
+            let playoutOptions;
+            if(PLAYER_TYPE === "bitmovin") {
+              playoutOptions = await client.BitmovinPlayoutOptions({
+                objectId,
+                versionHash,
+                protocols: [PROTOCOL],
+                drms: [DRM]
+              });
+    
+              LoadBitmovin(playoutOptions);
+            } else {
+              playoutOptions = await client.PlayoutOptions({
+                objectId,
+                versionHash,
+                protocols: [PROTOCOL],
+                drms: [DRM]
+              });
+    
+              if(PROTOCOL === "hls") {
+                LoadHlsJs(playoutOptions);
+              } else {
+                LoadDash(playoutOptions);
+              }
+            }
+    
+            const ve = document.getElementById("video-element");
+            ve.onended = function() {
+              window.console.log("The clip has ended");
+              playNextTrack();
+            };
+    
+          } catch(error) {
+            SetErrorMessage(error.message ? error.message : error);
+            console.error(error);
+          }
+        };
+    
+        const SetOptions = (protocol, drm) => {
+          PROTOCOL = protocol;
+          DRM = drm || "";
+    
+          UpdateButtons();
+        };
+    
+        const SetPlayer = (playerType) => {
+          PLAYER_TYPE = playerType;
+    
+          if(playerType === "bitmovin") {
+            document.getElementById("player-configuration").value = JSON.stringify({
+              "live": {
+                "lowLatency": {
+                  "targetLatency": 7,
+                  "catchup": {
+                    "playbackRateThreshold": 0.075,
+                    "seekThreshold": 5,
+                    "playbackRate": 1.2
+                  },
+                  "fallback": {
+                    "playbackRateThreshold": 0.075,
+                    "seekThreshold": 5,
+                    "playbackRate": 0.95
+                  }
+                }
+              }
+            }, null, 2);
+          } else {
+            document.getElementById("player-configuration").value = "{}";
+          }
+    
+          UpdateButtons();
+        };
+    
+        // cant figure out how to use javascript to find the url that matches the variable "hash" in the array
+        const arrayUrl = songsdata[0].url
+        window.console.log("array url", arrayUrl);
+    
+        
+        // create the sku variable
+        const sku = "selectedSong.sku" 
+        // need to swap "selectedSong.sku" with the data from the eluvio object that is the sku
+        window.console.log("sku", sku);
+    
+        // create the eluvio URL
+        // NOTES: selectedSong will pull the track in the player but we now need to unpack the metadata to get the SKU. might need to make an id variable and assign the selectedSong.sku to it, then use that below instead.
+        function generateLink(sku) {
+        var url = "https://wallet.preview.contentfabric.io/?preview=iq__PoyQD1L385EWHguKYvGNUbpyXbP&mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store/" + sku;
+        return url;
+        }
+    
+        // create currentUrl variable which is the URL of the song in the player
+        const currentUrl =  generateLink();
+        window.console.log("selectedLink", currentUrl);
+    
+        document.getElementById("select-hls-dash").onclick = () => SetPlayer("hls-dash");
+        document.getElementById("select-bitmovin").onclick = () => SetPlayer("bitmovin");
+    
+        document.getElementById("load-hls").onclick = () => SetOptions("hls", "clear");
+        document.getElementById("load-hls-aes").onclick = () => SetOptions("hls", "aes-128");
+        document.getElementById("load-hls-sample-aes").onclick = () => SetOptions("hls", "sample-aes");
+        document.getElementById("load-hls-fairplay").onclick = () => SetOptions("hls", "fairplay");
+        document.getElementById("load-dash").onclick = () => SetOptions("dash", "clear");
+        document.getElementById("load-dash-wv").onclick = () => SetOptions("dash", "widevine");
+    
+        playNextTrack()
+    
+        UpdateButtons();
+    
+        generateLink();
+    
+    
+      </script>
+
+    </div>
+</section>

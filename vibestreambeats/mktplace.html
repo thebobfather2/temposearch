@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Home Page</title>
+  <link rel="stylesheet" href="./Home.css">
+</head>
+<body>
+  <main class="MainContainer" style="padding: 10px;">
+    <section class="p-3">
+      <h2>Welcome to VSN!</h2>
+    </section>
+    <iframe id="wallet-target" title="Eluvio Wallet" style="width: 100%; height: 100%; border: none;"></iframe>
+  </main>
+
+  <script src="https://unpkg.com/@eluvio/elv-wallet-frame-client"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const walletTarget = document.getElementById("wallet-target");
+      let walletFrameClient;
+
+      async function initializeWalletFrameClient() {
+        walletFrameClient = await ElvWalletFrameClient.InitializeFrame({
+          requestor: "My App",
+          walletAppUrl: "https://wallet.contentfabric.io/?mid=iq__PoyQD1L385EWHguKYvGNUbpyXbP&hgm=/#/marketplace/iq__PoyQD1L385EWHguKYvGNUbpyXbP/store",
+          target: walletTarget
+        });
+      }
+
+      initializeWalletFrameClient().catch((error) => {
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>

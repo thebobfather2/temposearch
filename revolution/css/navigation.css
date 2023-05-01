@@ -8,6 +8,13 @@ author:  ThemePunch
 email:      info@themepunch.com
 website:    http://www.themepunch.com
 -----------------------------------------------------------------------------*/
+
+.video-container {
+  width: 854px;
+  height: 480px;
+}
+
+
 .ares.tparrows {
   cursor:pointer;
   background:#fff;
