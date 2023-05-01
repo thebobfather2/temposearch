@@ -42,12 +42,15 @@
     border-width: 10px !important;
     border-color: white;
     border: solid;
-    margin: 10%;
-    margin-top: 200px;
     width: 80%;
     background-color: black;
     box-shadow: 20px 20px #00000020;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
+  
 
   #error-message {
     padding: 20px 0 10px;
