@@ -21,7 +21,7 @@ $email_address = $_POST['email'];
 $message = $_POST['message'];
 
 // create email body and send it
-$to = 'pfx@astoriaadvertising.com'; // put your email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+$to = 'bryanandrewpike@gmail.com'; // put your email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 $from = isset($_POST["email"]) ? $_POST["email"] : "";
 $subject = "CONTACT REQUEST FROM VSN WEBSITE from:  $name";
 
