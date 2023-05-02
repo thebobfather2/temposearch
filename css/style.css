@@ -101,7 +101,7 @@ TABLE OF CONTENTS:
 /* -----------------------------------------------------------------------------------
 02 COMMON STYLES
 ----------------------------------------------------------------------------------- */
-
+  
 html{
     overflow-y: scroll;
     -ms-overflow-style: scrollbar;
@@ -1183,6 +1183,10 @@ html.mm-blocking {
 .page-section {
     position: relative;
     padding: 120px 0 0 0;
+}
+.partnerSection {
+    position: relative;
+    padding-top: 120px;
 }
 .half-section-square {
     position: relative;
@@ -4293,15 +4297,27 @@ a.link-post {
 
 /* Client Carousel */
 .client-cl {
-    display: none; 
-}
+    position: relative;
+  }
+  .cl-item::after {
+    content: "X";
+    position: absolute;
+    top: 60%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: white;
+  }
+  .cl-item:not(:last-child)::after {
+    display: block;
+  }
+  
 .client-cl .cl-item {
     margin: 0 4px;
 }
 .client-cl .cl-item img {
     display: block;
-    width: 100%;
-    height: auto;
+    width: 150px;
 }
 
 /* Testimonial Carousel */
