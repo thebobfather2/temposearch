@@ -4,30 +4,25 @@
   }
 
   .buttonBox {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
+  text-align: center;
+    }
+
+  .buttonBox a {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 10px; /* adjust as needed */
   }
 
-  button {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-image: url("./src/img/purchase.png");
+  .purchaseButton,
+  .nextButton {
+      display: inline-block;
+      margin-top: 60px;
+      margin-right: 10px; /* Optional, to add some spacing between the buttons */
   }
 
-  .purchaseButton {
-    margin-top: -100px;
-    margin-bottom: 60px;
-    margin-left: 100px;
-    margin-right: 100px;
-    padding: 20px;
-    display: flex;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-  }
+  .btnImage {
+    width: 200px;
+}
 
   .livepurchaseButton {
     margin-top: 60px;
@@ -36,6 +31,10 @@
     position: relative;
     align-items: center;
     justify-content: center;
+  }
+
+  #video-element {
+    width: 90%;
   }
 
   video {
@@ -138,27 +137,40 @@
 
   @media (max-width: 900px) {
     video {
-      display: flex;
-      flex-direction: column;
+      display: absolute;
+      top: 200px;
       max-width: 100%;
       align-items: center;
       justify-content: center;
-      margin-top: 100px !important;
+      margin-top: 0px !important;
       border-width: 5px !important;
       border: solid;
       box-shadow: 20px 20px #00000020;
     }
 
-    .purchaseButton {
-      margin-top: 0px;
-      margin-bottom: 0px;
-      display: flex;
-      position: relative;
-      align-items: center;
-      justify-content: center;
-    }
-
     .vidWindow {
       justify-content: center;
     }
+
+    .buttonBox {
+        text-align: center;
+          }
+      
+        .buttonBox a {
+          display: inline-block;
+          vertical-align: top;
+          margin-right: 10px; /* adjust as needed */
+        }
+      
+        .purchaseButton,
+        .nextButton {
+            display: inline-block;
+            margin-top:320px;
+            margin-right: 10px; /* Optional, to add some spacing between the buttons */
+        }
+
+        .btnImage {
+            width: 100px;
+        }
+      
 }
