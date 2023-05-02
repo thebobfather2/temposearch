@@ -33,10 +33,6 @@
     justify-content: center;
   }
 
-  #video-element {
-    width: 90%;
-  }
-
   video {
     border-width: 10px !important;
     border-color: white;
