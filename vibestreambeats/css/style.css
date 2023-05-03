@@ -101,7 +101,7 @@ TABLE OF CONTENTS:
 /* -----------------------------------------------------------------------------------
 02 COMMON STYLES
 ----------------------------------------------------------------------------------- */
-
+  
 html{
     overflow-y: scroll;
     -ms-overflow-style: scrollbar;
@@ -1184,6 +1184,11 @@ html.mm-blocking {
     position: relative;
     padding: 120px 0 0 0;
 }
+.partnerSection {
+    position: relative;
+    padding-top: 0px !important;
+    padding: 50px;
+}
 .half-section-square {
     position: relative;
 }
@@ -1228,6 +1233,48 @@ html.mm-blocking {
     padding-left: 0;
     padding-right: 60px; 
 }
+
+.teamText, 
+.teamTextSmall{
+  animation-name: glow;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  text-align: center;
+  font-size: 1.7vw;
+}
+
+ a:hover {
+    text-decoration: none;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+.teamText:hover, 
+.teamTextSmall:hover {
+  animation-name: glow;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  text-align: center;
+  font-size: 1.8vw;
+}
+
+@keyframes glow {
+    0% {
+      color: white;
+      text-shadow: 0 0 10px white;
+    }
+    50% {
+      color: #eee;
+      text-shadow: 0 0 20px #eee;
+    }
+    100% {
+      color: white;
+      text-shadow: 0 0 10px white;
+    }
+  }
+
 .section-title:after {
     content: "";
     position: absolute;
@@ -4293,15 +4340,42 @@ a.link-post {
 
 /* Client Carousel */
 .client-cl {
-    display: none; 
-}
+    position: relative;
+  }
+  .cl-item::after {
+    content: "X";
+    position: absolute;
+    top: 60%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: white;
+  }
+  .cl-item:not(:last-child)::after {
+    display: block;
+  }
+  
 .client-cl .cl-item {
     margin: 0 4px;
 }
 .client-cl .cl-item img {
     display: block;
-    width: 100%;
-    height: auto;
+    width: 150px;
+}
+
+
+  
+  .cl-item2:not(:last-child)::after {
+    display: block;
+  }
+  
+.client-cl .cl-item2 {
+    margin: 0 4px;
+}
+.client-cl .cl-item2 img {
+    display: block;
+    padding-top: 75px;
+    width: 250px;
 }
 
 /* Testimonial Carousel */
@@ -4346,6 +4420,7 @@ a.link-post {
     box-sizing: border-box;
     text-decoration: none;
 }
+
 .hover-effect .item-img {
     position: relative;
     overflow: hidden;
@@ -4644,25 +4719,6 @@ footer #insta li img {
     height: auto;
 }
 
-.vsnLock {
-    display: flex;
-    justify-content: center;
-    align-self: center;
-    align-items: center;
-    padding: 30px;
-    padding-bottom: 5px;
-}
-
-.lockImg {
-    max-width: 1400px;
-    margin-bottom: 50px;
-}
-
-.oops {
-    font-size: 1.8vw;
-    text-align: center;
-}
-
 @media (min-width: 768px) and (max-width: 991px) {
     footer #insta li {
         width: 50%;
@@ -4702,10 +4758,5 @@ footer #insta li img {
 @media (max-width: 767px) {
     .icons .box1 {
         width: 98%;   
-    }
-
-    .lockImg {
-        max-width: 300px;
-        padding-bottom: 40px;
     }
 }
