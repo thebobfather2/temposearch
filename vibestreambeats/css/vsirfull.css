@@ -133,8 +133,8 @@ video {
 
 @media (max-width: 900px) {
   video {
-    display: absolute;
-    top: 200px;
+    display: flex;
+    flex-direction: column;
     max-width: 100%;
     align-items: center;
     justify-content: center;
