@@ -1234,8 +1234,7 @@ html.mm-blocking {
     padding-right: 60px; 
 }
 
-.teamText, 
-.teamTextSmall{
+.teamText {
   animation-name: glow;
   animation-duration: 1s;
   animation-iteration-count: infinite;
@@ -1251,8 +1250,7 @@ html.mm-blocking {
     text-decoration: none;
   }
 
-.teamText:hover, 
-.teamTextSmall:hover {
+.teamText:hover {
   animation-name: glow;
   animation-duration: 1s;
   animation-iteration-count: infinite;
