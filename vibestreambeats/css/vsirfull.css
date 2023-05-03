@@ -132,25 +132,29 @@ video {
 }
 
 @media (max-width: 900px) {
-  video {
-    display: flex;
-    flex-direction: column;
-    max-width: 100%;
-    align-items: center;
-    justify-content: center;
-    margin-top: 0px !important;
-    border-width: 5px !important;
-    border: solid;
-    box-shadow: 20px 20px #00000020;
-  }
+    video {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0px !important;
+      border-width: 5px !important;
+      border: solid;
+      box-shadow: 20px 20px #00000020;
+      border-color: white;
+      width: 80%;
+      background-color: black;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
 
-  .vidWindow {
-    justify-content: center;
-  }
+    .vidWindow {
+      justify-content: center;
+    }
 
-  .buttonBox {
+    .buttonBox {
       text-align: center;
-        }
+    }
     
       .buttonBox a {
         display: inline-block;
@@ -161,7 +165,7 @@ video {
       .purchaseButton,
       .nextButton {
           display: inline-block;
-          margin-top:320px;
+          margin-top:220px;
           margin-right: 10px; /* Optional, to add some spacing between the buttons */
       }
 
