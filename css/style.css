@@ -1293,6 +1293,10 @@ html.mm-blocking {
         height: 400px;
         zoom: 0.8;
       }
+
+.topBuffer {
+    height: 150px;
+}
   
   
   /* For mobile */
@@ -1300,6 +1304,9 @@ html.mm-blocking {
     .etuMainBox {
       display: block;
       text-align: center;
+    }
+    .topBuffer {
+        height: 100px;
     }
 
     .contentFabricFrame {
