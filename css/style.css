@@ -1314,7 +1314,6 @@ html.mm-blocking {
         justify-content: center;
         align-items: center;
         flex-basis: 50%;
-        padding: 30px;
     }
     .fullFrameBox iframe {
         position:absolute; 
