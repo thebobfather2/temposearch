@@ -1347,6 +1347,131 @@ html.mm-blocking {
     position: relative;
     padding: 80px;
 }
+/* For desktop */
+
+.etuMainBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .etuFrameBox, .etuInfoBox {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    flex-basis: 50%;
+    padding: 20px;
+  }
+  .etuFrameBox iframe {
+      width: 700px;
+      height: 400px;
+      zoom: 0.8;
+    }
+
+    .contentFrameBox {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-basis: 50%;
+      padding: 30px;
+  }
+  .contentFrameBox iframe {
+      width: 700px;
+      height: 400px;
+      zoom: 0.8;
+    }
+
+          .fullFrameBox {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-basis: 50%;
+      padding: 30px;
+  }
+  .fullFrameBox iframe {
+      position:absolute; 
+      height:100%; 
+      width:100%; 
+      top: 420px;
+      zoom: 0.3;
+    }
+
+
+.topBuffer {
+  height: 150px;
+}
+
+
+/* For mobile */
+@media screen and (max-width: 767px) {
+  .etuMainBox {
+    display: block;
+    text-align: center;
+  }
+  .topBuffer {
+      height: 100px;
+  }
+
+  .contentFabricFrame {
+      width: 300px;
+      height: 400px;
+      zoom: 0.8;
+  }
+
+  .etuFrameBox, .etuInfoBox {
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+  }
+
+  .etuFrameBox iframe {
+      width: 400px;
+      height: 400px;
+      zoom: 0.8;
+      border: solid 1px #fff;
+      margin-bottom: 70px;
+    }
+  
+  .contentFrameBox {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    flex-basis: 50%;
+    padding: 20px;
+  }
+  .contentFrameBox iframe {
+      width: 450px;
+      height: 275px;
+      zoom: 0.8;
+      border: solid 1px #fff;
+    }
+    .fullFrameBox {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-basis: 50%;
+      padding: 30px;
+  }
+  .fullFrameBox iframe {
+      position:absolute; 
+      height:100%; 
+      width:100%; 
+      top: 200px;
+      zoom: 0.3;
+    }
+  .teamText {
+      font-size: medium;
+      padding-bottom: 30px;
+  }
+  .teamText:hover {
+      font-size: medium;
+      padding-bottom: 30px;
+  }
+}
 
 /* Home Title */
 .home-title {
