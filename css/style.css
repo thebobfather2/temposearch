@@ -1308,6 +1308,23 @@ html.mm-blocking {
         zoom: 0.8;
       }
 
+            .fullFrameBox {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-basis: 50%;
+        padding: 30px;
+    }
+    .fullFrameBox iframe {
+        position:absolute; 
+        height:100%; 
+        width:100%; 
+        top: 420px;
+        zoom: 0.3;
+      }
+
+
 .topBuffer {
     height: 150px;
 }
@@ -1356,6 +1373,21 @@ html.mm-blocking {
         height: 275px;
         zoom: 0.8;
         border: solid 1px #fff;
+      }
+      .fullFrameBox {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-basis: 50%;
+        padding: 30px;
+    }
+    .fullFrameBox iframe {
+        position:absolute; 
+        height:100%; 
+        width:100%; 
+        top: 200px;
+        zoom: 0.3;
       }
     .teamText {
         font-size: medium;
