@@ -1323,6 +1323,31 @@ html.mm-blocking {
         top: 420px;
         zoom: 0.3;
       }
+      .fourSquare {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 0px;
+      }
+      
+      .fourSquare div {
+        color: #fff;
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 20px;
+      }
+
+      .roadmapContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* set the height to fill the entire viewport */
+      }
+
+      .roadmapContainer img {
+        max-width: 100%;
+        max-height: 100%;
+      }
 
 
 .topBuffer {
