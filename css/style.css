@@ -1322,30 +1322,36 @@ html.mm-blocking {
         top: 420px;
         zoom: 0.3;
       }
+
+      .iconicMainBox {
+        margin-bottom: 40px;
+      }
       .fourSquare {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         grid-template-rows: repeat(2, 1fr);
         gap: 0px;
       }
-      
       .fourSquare div {
         color: #fff;
         font-size: 1.2rem;
         text-align: center;
         padding: 20px;
       }
-
+      .fourSquare img {
+        width: 500px;
+      }
       .roadmapContainer {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh; /* set the height to fill the entire viewport */
+        margin-top: 50px;
+        margin-bottom: 50px;
       }
 
       .roadmapContainer img {
-        max-width: 100%;
-        max-height: 100%;
+        max-width: 80%;
+        max-height: 80%;
       }
 
 
@@ -1412,6 +1418,38 @@ html.mm-blocking {
         width:100%; 
         top: 200px;
         zoom: 0.3;
+      }
+      .iconicMainBox {
+        margin-bottom: 0px;
+      }
+      .fourSquare {
+        display: flex;
+        flex-direction: column;
+      }
+      .fourSquare div:nth-child(3) {
+        order: 2; /* make the third div appear after the fourth div */
+      }
+      .fourSquare img {
+        width: 250px;
+        margin-top: 20px;
+      }
+      .fourSquare div {
+        color: #fff;
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 20px;
+      }
+      
+      .roadmapContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .roadmapContainer img {
+        margin-top: 20px;
+        max-width: 80%;
+        max-height: 80%;
       }
     .teamText {
         font-size: medium;
