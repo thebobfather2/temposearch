@@ -1425,6 +1425,7 @@ html.mm-blocking {
       .fourSquare {
         display: flex;
         flex-direction: column;
+        width: 100%;
       }
       .fourSquare div:nth-child(3) {
         order: 2; /* make the third div appear after the fourth div */
