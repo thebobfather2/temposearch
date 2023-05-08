@@ -1430,8 +1430,8 @@ html.mm-blocking {
         order: 2; /* make the third div appear after the fourth div */
       }
       .fourSquare img {
-        width: 250px;
-        margin-top: 20px;
+        width: 250px !important;
+        margin-top: 20px !important;
       }
       .fourSquare div {
         color: #fff;
