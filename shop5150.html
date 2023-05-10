@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <title>Vibe Stream Network | Iconic Stories</title>
+    <title>Vibe Stream Network | Shop Iconic Stories</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
 
@@ -155,51 +155,61 @@
         </div>
         <!-- /HEADER -->           
 <section class="topBuffer"></section>
-        <div class="iconicMainBox">
-            <div>
-                <div class="mb0 text-center"><img src="images/iconicstories.png" style='width:100%; max-width: 800px;'  alt="VSB"></div>
+
+<section class="fulliFrame">
+    <div class="fullFrameBox">
+        <iframe src="https://eluv.io/vsn/5150" frameborder="0"></iframe>
+    </div>
+</section>
+
+
+
+
+
+        <div>
+            <div class="etuMainBox">
+                <div class="etuInfoBox">
+                    <h2 class="title half-title text-center" style="margin-top: 1000px;">
+                        <br><br>
+                    </h2>
+                </div>
+
             </div>
+              
+              <script>
+                const toggleVideoButton = document.getElementById('togglevideo2');
+                const box3 = document.getElementById('box3');
+                const box4 = document.getElementById('box4');
+                toggleVideoButton.addEventListener('click', () => {
+                  box3.style.display = box3.style.display === 'none' ? 'block' : 'none';
+                  box4.style.display = box4.style.display === 'none' ? 'block' : 'none';
+                });
+              </script>
         </div>
-    </section>
 
-    <section class="half-section-square">
-        <div class="fourSquare">
-            <div>
-              <h2>Live From The Couch At 5150</h2>
-              <p>Exclusive insider footage from the mysterious studio of Eddie Van Halen. The year that Andrew Bennett spent recording VH was pivotal as Eddie introduced the new bass player — his son! Coming soon to VSN, you can watch their first rehearsals together, listen to raw demo tapes without vocals, and get snippets of conversation that will rock the foundation of Van Halen lore.</p>
-               <a href="shop5150.html" class="btn btn-main btn-border btn-lg">SHOP</a>
+      
+  <section style="padding-top: 20px; padding-bottom: 50px;">
+    <div>
+    </div>
+        <div class="row">
+            <div class="team-cl">
             </div>
-            <div>
-              <!-- <h2></h2> -->
-              <img src="./images/iconicroadmap.jpg" alt="Van Halen" style="border-radius: 20px; box-shadow: 3px 3px #FFFFFF50;">
-            </div>
+            <br><br>
         </div>
-        <!-- <div class="fourSquare">
-            <div>
-              <h2></h2>
-              <img src="./images/jamie.jpg" alt="Jamie">
-            </div>
-            <div>
-                <h2>Humanizing The Rockstar</h2>
-                <p>Be the fly on the wall and see the life of late rockstar Scott Weiland through the lens of his wife Jamie.</p>
-                    <a href="shopiconicstories.html" class="btn btn-main btn-border btn-lg">SHOP</a>
-            </div>
-          </div> -->
-    </section>
+    </div>
+</section>
 
-    <!-- <section class="half-section-square">
-        <div class="roadmapContainer">
-            <img src="./images/iconicroadmap.jpg" style="border: solid 1px #fff;">
-        </div>     
-    </section> -->
 
-<br><br><br>
 
+        <a href="#" class="back-to-top Fixed"></a>
+        <div class="check-media"></div>
+    </div>
     <nav id="menu">
         <ul>
         </ul>
     </nav>
     <!-- /MENU RIGHT -->
+    
     
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -352,56 +362,8 @@ jsFileLocation:"revolution/js/",
 				}
 			});	/*ready*/
 		</script>
-		<script>
-    	$('#togglevideo1').on('click',function(){
-    		$('#box1').toggle();
-    		$('#box2').toggle();
-    	});
-        (function() {
-            var playMyVideo;
-            var playMyVideo2;
-            window.onYouTubeIframeAPIReady = function() {
-                new YT.Player(document.querySelector('#box2'), {
-                    events: {
-                        onReady: function(e) {
-                            playMyVideo = function() {
-                                var player = e.target;
-                                player.playVideo();
-                            }
-                        }
-                    }
-                });
-                
-                new YT.Player(document.querySelector('#box4'), {
-                    events: {
-                        onReady: function(e) {
-                            playMyVideo2 = function() { 
-                                var player2 = e.target;
-                                player2.playVideo();
-                            }
-                        }
-                    }
-                });
-            }
-            
-            document.querySelector('#togglevideo1').addEventListener('click', function(e) {
-                e.preventDefault();
-                playMyVideo();
-            })
-            
-            document.querySelector('#togglevideo2').addEventListener('click', function(e) {
-                e.preventDefault();
-                playMyVideo2();
-            })
-        })();
-        
-        
-        $('#togglevideo2').on('click',function(){
-    		$('#box3').toggle();
-    		$('#box4').toggle();
-    	});
 
-    	</script>
+    
 
 </body>
 </html>

@@ -1329,6 +1329,8 @@ html.mm-blocking {
         grid-template-columns: 1fr 2fr; /* adjust the column widths */
         gap: 0px;
         border: solid 1px #fff;
+        margin-left: 50px;
+        margin-right: 50px;
       }
       
       .fourSquare div {
@@ -1471,7 +1473,8 @@ html.mm-blocking {
       .fourSquare {
         display: flex;
         flex-direction: column;
-        width: 100%;
+margin-left: 10px;
+margin-right: 10px;
       }
       .fourSquare div:nth-child(3) {
         order: 4; /* make the third div appear after the fourth div */
