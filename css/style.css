@@ -1379,7 +1379,7 @@ html.mm-blocking {
 
 
 .topBuffer {
-    height: 150px;
+    height: 110px;
 }
 
 .topBufferAbout {
@@ -1406,7 +1406,41 @@ html.mm-blocking {
     align-items: center;
     height: 100vh; /* set a height to make the container fill the viewport */
   }
+
+  .topBanner {
+    width: 100%;
+  }
+
+  .topBanner1 {
+    display: none;
+  }
+  .topBanner2 {
+    display: block;
+  }
+
+  .banner-link {
+    width: 100%;
+    position: relative;
+    display: inline-block; /* Ensures the container wraps around the images */
+  }
   
+  .overlay-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    animation: fade-in 5s ease-in-out forwards;
+  }
+  
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
   
   /* For mobile */
   @media screen and (max-width: 767px) {
@@ -1415,7 +1449,7 @@ html.mm-blocking {
       text-align: center;
     }
     .topBuffer {
-        height: 100px;
+        height: 60px;
     }
 
     .contentFabricFrame {
@@ -1423,6 +1457,13 @@ html.mm-blocking {
         height: 400px;
         zoom: 0.8;
     }
+
+    .topBanner1 {
+        display: block;
+      }
+      .topBanner2 {
+        display: none;
+      }
 
     .etuFrameBox, .etuInfoBox {
       width: 100%;
@@ -1475,6 +1516,7 @@ html.mm-blocking {
         flex-direction: column;
 margin-left: 10px;
 margin-right: 10px;
+padding: 10px;
       }
       .fourSquare div:nth-child(3) {
         order: 4; /* make the third div appear after the fourth div */
@@ -1483,14 +1525,14 @@ margin-right: 10px;
         order: 3; /* make the third div appear after the fourth div */
       }
       .fourSquare img {
-        width: 250px !important;
+        width: 500px !important;
         margin-top: 20px !important;
       }
       .fourSquare div {
         color: #fff;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         text-align: center;
-        padding: 20px;
+        padding: 0px;
       }
       
       .roadmapContainer {
