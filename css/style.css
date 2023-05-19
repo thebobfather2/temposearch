@@ -1462,6 +1462,7 @@ html.mm-blocking {
 
   .r5150mapcontainer {
     margin-top: 150px;
+    margin-bottom: 300px;
     padding: 0px;
     display: flex;
     justify-content: center;
@@ -1640,6 +1641,7 @@ padding: 10px;
     
       .r5150mapcontainer {
         margin-top: 0px;
+        margin-bottom: 0px;
         display: flex;
         justify-content: center;
         align-items: center;
