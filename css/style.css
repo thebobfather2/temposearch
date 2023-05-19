@@ -1460,6 +1460,16 @@ html.mm-blocking {
     height: 100% !important;
   }
 
+  .r5150mapcontainer1 {
+    margin-top: 150px;
+    margin-bottom: 300px;
+    padding: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
   .r5150mapcontainer {
     margin-top: 150px;
     margin-bottom: 300px;
@@ -1472,6 +1482,10 @@ html.mm-blocking {
   
   .roadmap5150 {
     text-align: center;
+  }
+
+  .roadmap5150text {
+    font-size: 6vw;
   }
 
   .r5150roadmap {
@@ -1638,6 +1652,20 @@ padding: 10px;
         width: 100% !important;
         height: 100% !important;
       }
+
+      .r5150mapcontainer1 {
+        margin-top: 150px;
+        margin-bottom: 120px;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 10vh;
+      }
+
+      .roadmap5150text {
+        font-size: 8vw;
+      }
     
       .r5150mapcontainer {
         margin-top: 0px;
@@ -1651,6 +1679,7 @@ padding: 10px;
       
       .roadmap5150 {
         text-align: center;
+        font-size: 4vw;
       }
       .r5150roadmap {
         border-radius: 0px;
