@@ -1735,24 +1735,24 @@ html.mm-blocking {
     height: 100% !important;
   }
 
-  .r5150mapcontainer1 {
-    margin-top: 150px;
-    margin-bottom: 300px;
-    padding: 0px;
+  .roadBox {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    flex-direction: column;
+    border: solid 2px #fff;
+    margin: 50px;
+  }
+
+  .r5150mapcontainer1 {
+    margin-bottom: 50px;
   }
 
   .r5150mapcontainer {
-    margin-top: 150px;
-    margin-bottom: 300px;
+    margin-top: 0px;
+    margin-bottom: 50px;
     padding: 0px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
   }
   
   .roadmap5150 {
@@ -1760,12 +1760,13 @@ html.mm-blocking {
   }
 
   .roadmap5150text {
-    font-size: 6vw;
+    margin-top: 50px;
+    font-size: 4vw;
   }
 
   .r5150roadmap {
+    border: solid 2px #fff;
     border-radius: 20px;
-    box-shadow: 3px 3px #FFFFFF50;
     width: 90%;
   }
   
@@ -1931,18 +1932,25 @@ padding: 10px;
         height: 100% !important;
       }
 
+      .roadBox {
+        display: flex;
+        flex-direction: column;
+        border: solid 2px #fff;
+        margin: 10px;
+      }
+
+      .roadmap5150text {
+        margin-top: 25px;
+        font-size: 8vw;
+      }
+
       .r5150mapcontainer1 {
-        margin-top: 150px;
-        margin-bottom: 120px;
+        margin-top: 0px;
+        margin-bottom: 0px;
         padding: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 10vh;
-      }
-
-      .roadmap5150text {
-        font-size: 8vw;
       }
     
       .r5150mapcontainer {
@@ -1951,7 +1959,6 @@ padding: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 40vh;
         padding: 10px;
       }
       
