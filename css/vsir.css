@@ -3,6 +3,105 @@
     visibility: visible;
   }
 
+  .topBuffer {
+    height: 110px;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 10px;
+}
+.followers {
+  width: 112%;
+  font-size: 1.5vw;
+}
+.item {
+  width: 30%;
+}
+
+.profileMain {
+  display: flex;
+}
+
+.VSIRbox {
+  flex: 1;
+  /* Add any other necessary styles for VSIRbox */
+}
+
+.profileMarketplace {
+  flex: 1;
+  margin-top: 5%;
+  width: 100%;
+}
+
+.profileiFrame {
+  width: 90%;
+  height: 97%;
+  border-width: 10px !important;
+  border-color: white;
+  border: solid;
+}
+
+
+@media (max-width: 768px) { /* adjust to your desired screen size */
+  .pfp {
+      padding: 50px;
+  }
+
+  .followers {
+      font-size:3.5vw;
+      width: 90%;
+  }
+
+  .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 10px;
+      padding: 30px;
+  }
+  
+  .item {
+      width: 30%;
+  }
+  .profileMain {
+    display: flex;
+    flex-direction: column;
+  }
+  .profileMarketplace {
+    flex: 1;
+    margin-top: 5%;
+    width: 100%;
+  }
+  .profileiFrame {
+    width: 90%;
+    height: 400px;
+    border-width: 5px !important;
+    border-color: white;
+    border: solid;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  video {
+    border-width: 10px !important;
+    border-color: white;
+    border: solid;
+    margin: 10%;
+    margin-bottom: 10px !important;
+    width: 100%;
+    background-color: black;
+  }
+  .purchaseButton {
+    padding: 20px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
   .buttonBox {
     display: flex;
     flex-wrap: wrap;
@@ -18,10 +117,6 @@
   }
 
   .purchaseButton {
-    margin-top: -100px;
-    margin-bottom: 60px;
-    margin-left: 100px;
-    margin-right: 100px;
     padding: 20px;
     display: flex;
     position: relative;
@@ -43,10 +138,9 @@
     border-color: white;
     border: solid;
     margin: 10%;
-    margin-top: 200px;
+    margin-bottom: 10px !important;
     width: 80%;
     background-color: black;
-    box-shadow: 20px 20px #00000020;
   }
 
   #error-message {
@@ -132,6 +226,9 @@
     margin-right: 150px;
     margin-top: 20px;
   }
+  .vsirButtons {
+    max-width: auto;
+  }
 
   @media (max-width: 900px) {
     video {
@@ -154,7 +251,9 @@
       align-items: center;
       justify-content: center;
     }
-
+    .vsirButtons {
+      max-width: 140px;
+    }
     .vidWindow {
       justify-content: center;
     }

@@ -1418,6 +1418,10 @@ html.mm-blocking {
     display: block;
   }
 
+  .topBannerProfile {
+    display: block;
+  }
+
   .banner-link {
     width: 100%;
     position: relative;
