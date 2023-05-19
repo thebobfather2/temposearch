@@ -1693,6 +1693,10 @@ html.mm-blocking {
   }
   .topBanner2 {
     display: block;
+  }
+
+  .topBannerPFP2 {
+    display: block;
     border-bottom: solid 2px #fff;
     margin-bottom: 80px;
   }
@@ -1796,6 +1800,9 @@ html.mm-blocking {
         display: block;
       }
       .topBanner2 {
+        display: none;
+      }
+      .topBannerPFP2 {
         display: none;
       }
 
