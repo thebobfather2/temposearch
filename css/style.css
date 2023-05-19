@@ -1308,7 +1308,7 @@ html.mm-blocking {
         zoom: 0.8;
       }
 
-            .fullFrameBox {
+    .fullFrameBox {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -1768,6 +1768,11 @@ html.mm-blocking {
     border: solid 2px #fff;
     border-radius: 20px;
     width: 90%;
+  }
+
+  .fulliFrame {
+    height: 100%;
+    padding-bottom: 500px;
   }
   
   
