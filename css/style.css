@@ -1326,7 +1326,7 @@ html.mm-blocking {
       .fourSquare {
         padding: 50px;
         display: grid;
-        grid-template-columns: 1fr 2fr; /* adjust the column widths */
+        grid-template-columns: 3fr 2fr; /* adjust the column widths */
         gap: 0px;
         border: solid 1px #fff;
         margin-left: 50px;
@@ -1375,6 +1375,14 @@ html.mm-blocking {
       .roadmapContainer img {
         max-width: 80%;
         max-height: 80%;
+      }
+
+      .iconicHeading {
+        font-size: 3vw;
+      }
+
+      .iconicText {
+        font-size: 1.3vw;
       }
 
 
@@ -1436,6 +1444,42 @@ html.mm-blocking {
     opacity: 0;
     animation: fade-in 5s ease-in-out forwards;
   }
+
+  .iframeContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  
+  .vanhalenClip {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .r5150mapcontainer {
+    margin-top: 150px;
+    padding: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .roadmap5150 {
+    text-align: center;
+  }
+
+  .r5150roadmap {
+    border-radius: 20px;
+    box-shadow: 3px 3px #FFFFFF50;
+    width: 90%;
+  }
+  
+  
   
   @keyframes fade-in {
     0% {
@@ -1573,6 +1617,46 @@ padding: 10px;
     .topBufferAbout {
         height: 0px;
     }
+    .iconicHeading {
+        font-size: 6vw;
+      }
+    .iconicText {
+        font-size: 4.3vw;
+      }
+      .iframeContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 350px;
+        position: relative;
+      }
+      
+      .vanhalenClip {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+    
+      .r5150mapcontainer {
+        margin-top: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40vh;
+        padding: 10px;
+      }
+      
+      .roadmap5150 {
+        text-align: center;
+      }
+      .r5150roadmap {
+        border-radius: 0px;
+        border: solid 1px #fff;
+        box-shadow: 0px 0px #FFFFFF50;
+        width: 100%;
+        max-width: 800px; /* Set a maximum width if desired */
+      }
   }
   
 .section-title:after {
