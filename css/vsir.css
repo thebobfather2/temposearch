@@ -17,8 +17,9 @@
   width: 112%;
   font-size: 1.5vw;
 }
-.item {
-  width: 30%;
+
+.profileHead {
+  margin-top: 50px;
 }
 
 .profileMain {
@@ -30,10 +31,15 @@
   /* Add any other necessary styles for VSIRbox */
 }
 
+.profilePlayer {
+
+}
+
 .profileMarketplace {
   flex: 1;
   margin-top: 5%;
   width: 100%;
+  margin-bottom: 0px;
 }
 
 .profileiFrame {
@@ -46,6 +52,7 @@
 
 
 @media (max-width: 768px) { /* adjust to your desired screen size */
+
   .pfp {
       padding: 50px;
   }
@@ -62,33 +69,44 @@
       gap: 10px;
       padding: 30px;
   }
-  
-  .item {
-      width: 30%;
+
+  .profileHead {
+    margin-top: 0px;
   }
   .profileMain {
     display: flex;
     flex-direction: column;
   }
+  .VSIRbox {
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
+  }
+  .profilePlayer {
+    margin-top: -60px;
+  }
   .profileMarketplace {
     flex: 1;
     margin-top: 5%;
     width: 100%;
+    margin-bottom: 20px;
   }
   .profileiFrame {
-    width: 90%;
-    height: 400px;
+    width: 85%;
+    height: 450px;
     border-width: 5px !important;
     border-color: white;
     border: solid;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 30px;
+    margin-right: 30px;
   }
+  
   video {
     border-width: 10px !important;
     border-color: white;
     border: solid;
-    margin: 10%;
+    margin: 0%;
     margin-bottom: 10px !important;
     width: 100%;
     background-color: black;

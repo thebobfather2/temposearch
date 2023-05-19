@@ -1385,7 +1385,276 @@ html.mm-blocking {
         font-size: 1.3vw;
       }
 
+      .bmpui-ui-skin-modern .bmpui-ui-controlbar.bmpui-hidden {
+        opacity: 1;
+        visibility: visible;
+      }
+    
+      .topBuffer {
+        height: 110px;
+    }
+    
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 10px;
+    }
+    .followers {
+      width: 112%;
+      font-size: 1.5vw;
+    }
 
+    .profileMain {
+      display: flex;
+    }
+    
+    .VSIRbox {
+      flex: 1;
+      /* Add any other necessary styles for VSIRbox */
+    }
+    
+    .profilePlayer {
+    
+    }
+    
+    .profileMarketplace {
+      flex: 1;
+      margin-top: 5%;
+      width: 100%;
+    }
+    
+    .profileiFrame {
+      width: 90%;
+      height: 97%;
+      border-width: 10px !important;
+      border-color: white;
+      border: solid;
+    }
+    
+    
+    @media (max-width: 768px) { /* adjust to your desired screen size */
+    
+      .pfp {
+          padding: 50px;
+      }
+    
+      .followers {
+          font-size:3.5vw;
+          width: 90%;
+      }
+    
+      .gallery {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-around;
+          gap: 10px;
+          padding: 30px;
+      }
+    
+      .profileMain {
+        display: flex;
+        flex-direction: column;
+      }
+      .VSIRbox {
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center;
+      }
+      .profilePlayer {
+        margin-top: -60px;
+      }
+      .profileMarketplace {
+        flex: 1;
+        margin-top: 5%;
+        width: 100%;
+      }
+      .profileiFrame {
+        width: 85%;
+        height: 400px;
+        border-width: 5px !important;
+        border-color: white;
+        border: solid;
+        margin-left: 30px;
+        margin-right: 30px;
+      }
+      
+      video {
+        border-width: 10px !important;
+        border-color: white;
+        border: solid;
+        margin: 0%;
+        margin-bottom: 10px !important;
+        width: 100%;
+        background-color: black;
+      }
+      .purchaseButton {
+        padding: 20px;
+        display: flex;
+        position: relative;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    
+      .buttonBox {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+      }
+    
+      button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-image: url("./src/img/purchase.png");
+      }
+    
+      .purchaseButton {
+        padding: 20px;
+        display: flex;
+        position: relative;
+        align-items: center;
+        justify-content: center;
+      }
+    
+      .livepurchaseButton {
+        margin-top: 60px;
+        margin-bottom: 60px;
+        display: flex;
+        position: relative;
+        align-items: center;
+        justify-content: center;
+      }
+    
+      video {
+        border-width: 10px !important;
+        border-color: white;
+        border: solid;
+        margin: 10%;
+        margin-bottom: 10px !important;
+        width: 80%;
+        background-color: black;
+      }
+    
+      #error-message {
+        padding: 20px 0 10px;
+        text-align: center;
+        color: #bb0000;
+      }
+    
+      #error-message:empty {
+        padding: 0;
+      }
+    
+      #bitrate {
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 20px;
+        height: 2rem;
+      }
+    
+      .controls {
+        margin: 20px 0 50px;
+      }
+    
+      .actions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px 0;
+      }
+    
+      .actions button {
+        background: white;
+        border: 1px solid #1b73e8;
+        color: #1b73e8;
+    
+        height: 30px;
+        width: 200px;
+        margin-right: 5px;
+      }
+    
+      .actions button.active {
+        background: #1b73e8;
+        color: white;
+      }
+    
+      .actions button:hover {
+        background: #1b7bff;
+        color: white;
+      }
+    
+      .input-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 0;
+      }
+    
+      .input-container input,
+      .input-container textarea {
+        width: 75rem;
+        padding: 0 0.5rem;
+        height: 3rem;
+        font-family: monospace;
+        border: 1px solid gray;
+      }
+    
+      .input-container textarea {
+        height: 20rem;
+      }
+    
+      .vidWindow {
+        justify-content: center;
+        margin-left: 2000px;
+      }
+    
+      .skipBtn {
+        color: black;
+        position: relative;
+        float: right;
+        margin-right: 150px;
+        margin-top: 20px;
+      }
+      .vsirButtons {
+        max-width: auto;
+      }
+    
+      @media (max-width: 900px) {
+        video {
+          display: flex;
+          flex-direction: column;
+          max-width: 100%;
+          align-items: center;
+          justify-content: center;
+          margin-top: 100px !important;
+          border-width: 5px !important;
+          border: solid;
+          box-shadow: 20px 20px #00000020;
+        }
+    
+        .purchaseButton {
+          margin-top: 0px;
+          margin-bottom: 0px;
+          display: flex;
+          position: relative;
+          align-items: center;
+          justify-content: center;
+        }
+        .vsirButtons {
+          max-width: 140px;
+        }
+        .vidWindow {
+          justify-content: center;
+        }
+    }
+    
 .topBuffer {
     height: 110px;
 }
@@ -1424,6 +1693,8 @@ html.mm-blocking {
   }
   .topBanner2 {
     display: block;
+    border-bottom: solid 2px #fff;
+    margin-bottom: 80px;
   }
 
   .topBannerProfile {
