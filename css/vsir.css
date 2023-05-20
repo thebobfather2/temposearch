@@ -85,6 +85,7 @@
   }
   .profilePlayer {
     margin-top: -60px;
+    min-width: 420px;
   }
   .profileMarketplace {
     flex: 1;
@@ -258,7 +259,6 @@
       margin-top: 100px !important;
       border-width: 5px !important;
       border: solid;
-      box-shadow: 20px 20px #00000020;
     }
 
     .purchaseButton {
@@ -270,7 +270,8 @@
       justify-content: center;
     }
     .vsirButtons {
-      max-width: 140px;
+      height: 30px;
+      min-width: 150px !important;
     }
     .vidWindow {
       justify-content: center;
