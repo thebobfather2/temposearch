@@ -1323,6 +1323,24 @@ html.mm-blocking {
         zoom: 0.3;
       }
 
+      .iconMkt {
+        padding: 50px;
+        display: grid;
+        height: 800px;
+        gap: 0px;
+        border: solid 1px #fff;
+        margin-left: 50px;
+        margin-right: 50px;
+        margin-bottom: 50px;
+      }
+
+      .iconMkt div {
+        color: #fff;
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 20px;
+      }
+
       .fourSquare {
         padding: 50px;
         display: grid;
@@ -1434,7 +1452,21 @@ html.mm-blocking {
     
     
     @media (max-width: 768px) { /* adjust to your desired screen size */
+        .iconMkt {
+            display: flex;
+            height: 370px;
+            flex-direction: column;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 10px;
+          }
     
+          .iconMkt div {
+            color: #fff;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+          }
       .pfp {
           padding: 50px;
       }
