@@ -1403,6 +1403,24 @@ html.mm-blocking {
         font-size: 1.3vw;
       }
 
+      .profileHead {
+        margin-bottom: 10px;
+      }
+
+      .identityBox {
+        max-width:1200px; 
+        margin: auto; 
+        padding-left: 20px; 
+        padding-right: 20px;
+      }
+
+      .profilePic {
+        width:250px; 
+        height:250px; 
+        border: double 6px #cc0505;
+        border-radius:120px;
+      }
+
       .profileBiobox {
         display: flex;
       }
@@ -1422,10 +1440,29 @@ html.mm-blocking {
         text-align: center;
       }
       
-      .profileTitle {
-        font-size: 2vh;
-        width: 100%;
-      } 
+          .profileNameTitle {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                height: 100%;
+            }
+
+          .profileName {
+            margin-top: 16%;
+            font-size:3.5vw; 
+            text-align: center;
+          }
+          .profilemainTitle {
+            font-family: 'Hurricane', cursive;
+            text-align: center;
+            font-size: 2.9vw;
+          }
+          .profileTitle {
+            text-align: center;
+            font-family: 'Anton', sans-serif;
+          }
       
       .profileBio {
         font-size: 2vh;
@@ -1471,7 +1508,12 @@ html.mm-blocking {
       width: 100%;
       height: 624px;
     }
-    
+
+    .profileiFrameheading {
+        font-size: 9vh;
+        font-family: 'Anton', sans-serif;
+    }
+  
     .profileiFrame {
       width: 90%;
       height: 97%;
@@ -1497,14 +1539,57 @@ html.mm-blocking {
             margin-left: 10px;
             margin-right: 10px;
             padding: 10px;
-          }
+        }
     
-          .iconMkt div {
+        .iconMkt div {
             color: #fff;
             font-size: 1.2rem;
             text-align: center;
             padding: 20px;
+        }
+
+        .profileHead {
+            margin-bottom: 10px;
+        }
+
+          .identityBox {
+            max-width:600px; 
+            margin: auto; 
+            padding-left: 20px; 
+            padding-right: 20px;
           }
+
+          .profilePic {
+            width:150px; height:150px; border-radius:80px;
+          }
+
+          .profileNameTitle {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                height: 100%;
+            }
+
+          .profileName {
+            margin-top: 30px;
+            font-size: 2.5vh; 
+            text-align: center;
+          }
+          .profilemainTitle {
+            font-family: 'Hurricane', cursive;
+            text-align: center;
+            font-size: 3vh;
+          }
+          .profileTitle {
+            text-align: center;
+            font-family: 'Anton', sans-serif;
+          }
+    .profileiFrameheading {
+        font-size: 3vh;
+        font-family: 'Anton', sans-serif;
+    }
       .pfp {
           padding: 50px;
       }
@@ -1528,6 +1613,7 @@ html.mm-blocking {
       .leftiFrameprofile {
         width: 85%;
         height: 90%;
+        border: double 1px #cc0505;
       }
     
       .rightTextbox {
@@ -1561,10 +1647,19 @@ html.mm-blocking {
         background-color: #000;
         text-align: center;
         margin-bottom: 75px;
+                display: flex;
+        color: #fff;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
       }
 
       .profileSocials {
+        display: flex;
         color: #fff;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
       }
     
       .gallery {
@@ -1599,6 +1694,7 @@ html.mm-blocking {
       .profileMarketplace {
         margin-bottom: 20px;
       }
+      
       .profileiFrame {
         width: 90%;
         height: 400px;
