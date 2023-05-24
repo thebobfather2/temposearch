@@ -197,7 +197,19 @@
         </div>
     </section>
 
-    <section class="roadBox">
+    <section class="roadmapCarousel">
+        <div class="carousel">
+            <img class="carouselImg" src="./images/iconicroadmap.png" alt="Van Halen">
+            <img class="carouselImg" src="./images/5150options.png" alt="Van Halen">
+        </div>
+        <div class="carouselNav">
+            <button id="prevBtn">Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+    </section>
+    
+
+    <!-- <section class="roadBox">
         <div class="r5150mapcontainer1">
             <div class="roadmap5150">
                 <h2 class="roadmap5150text" style="text-align: center;">ROADMAP</h2>
@@ -210,7 +222,7 @@
                 <img class="r5150roadmap" src="./images/5150options.png" alt="Van Halen">
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- <section class="half-section-square">
         <div class="roadmapContainer">
@@ -367,6 +379,28 @@ jsFileLocation:"revolution/js/",
 					});
 				}
 			});	/*ready*/
+
+    document.addEventListener("DOMContentLoaded", function() {
+    const carousel = document.querySelector(".carousel");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    let currentIndex = 0;
+
+    prevBtn.addEventListener("click", function() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            carousel.style.transform = `translateX(-${currentIndex * 50}%)`;
+        }
+    });
+
+    nextBtn.addEventListener("click", function() {
+        if (currentIndex < carousel.children.length - 1) {
+            currentIndex++;
+            carousel.style.transform = `translateX(-${currentIndex * 50}%)`;
+        }
+    });
+});
+
 		</script>
 		<script>
     	$('#togglevideo1').on('click',function(){
@@ -418,24 +452,6 @@ jsFileLocation:"revolution/js/",
     	});
 
     	</script>
-
-<!-- PARTNERS -->
-<section class="partnerSection">
-    <div class="client-cl">
-        <div class="cl-item"><img src="images/partner-tfiou-white.png" alt="Client 1"></div>
-        <div class="cl-item"><img src="images/partner-eluvio-white.png" alt="Client 2"></div>
-        <div class="cl-item"><img src="images/partner-josh-white.png" alt="tfiou"></div>
-        <div class="cl-item"><img src="images/partner-astoria-white.png" alt="Client 1"></div>
-        <div class="cl-item"><img src="images/partner-tfiou-white.png" alt="Client 1"></div>
-        <div class="cl-item"><img src="images/partner-eluvio-white.png" alt="Client 2"></div>
-        <div class="cl-item"><img src="images/partner-josh-white.png" alt="tfiou"></div>
-        <div class="cl-item"><img src="images/partner-astoria-white.png" alt="Client 1"></div>
-        <div class="cl-item"><img src="images/partner-tfiou-white.png" alt="Client 1"></div>
-        <div class="cl-item"><img src="images/partner-eluvio-white.png" alt="Client 2"></div>
-        <div class="cl-item"><img src="images/partner-josh-white.png" alt="tfiou"></div>
-        <div class="cl-item"><img src="images/partner-astoria-white.png" alt="Client 1"></div>
-    </div>
-</section>
 <br>
     <nav id="menu">
         <ul>

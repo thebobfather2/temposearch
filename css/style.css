@@ -1530,6 +1530,45 @@ html.mm-blocking {
         border: solid;
       }
     
+      .roadmapCarousel {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .carousel {
+        display: flex;
+        width: 200%; /* Adjust this value based on the number of images */
+        transition: transform 0.5s ease-in-out;
+    }
+    
+    .carouselImg {
+        width: 50%;
+        padding: 200px;
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+    }
+    
+    .carouselNav {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    
+    #prevBtn {
+        background-color: #000;
+        padding: 5px 10px;
+    }
+
+    #nextBtn {
+        background-color: #000;
+        margin-left: 80px;
+        padding: 5px 10px;
+    }
+    
+    
     
     @media (max-width: 768px) { /* adjust to your desired screen size */
         .iconMkt {
@@ -1731,7 +1770,25 @@ html.mm-blocking {
         align-items: center;
         justify-content: center;
       }
+
+      .roadmapCarousel {
+        margin-top: 50px;
+        margin-bottom: 50px;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
     }
+      .carousel {
+        margin-top: 50px;
+        width: 200%;
+    }
+
+    .carouselImg {
+        width: 50%;
+        height: 200px;
+        padding: 10px;
+    }
+}
     
       .buttonBox {
         display: flex;
