@@ -1396,6 +1396,7 @@ html.mm-blocking {
       }
 
       .iconicHeading {
+        font-family: 'Anton', sans-serif;
         font-size: 3vw;
       }
 
@@ -2012,8 +2013,17 @@ html.mm-blocking {
     animation: fade-in 5s ease-in-out forwards;
   }
 
-  .iframeContainer {
+  .desktopiframeContainer {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .mobileiframeContainer {
+    display: none;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -2217,11 +2227,18 @@ padding: 10px;
     .iconicText {
         font-size: 4.3vw;
       }
-      .iframeContainer {
+
+      .desktopiframeContainer {
+        display: none;
+      }
+
+      .mobileiframeContainer {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
+        margin-top: 50px;
+        margin-bottom: 100px;
         height: 350px;
         position: relative;
       }
