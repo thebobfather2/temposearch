@@ -1,21 +1,21 @@
 <body>
     <div class="top-bar">
         <h1>
-            My Forum
+            Vibe Stream Forum
         </h1>
     </div>
     <div class="main">
         <ol>
         </ol>
     </div>
-    <script src="data.js"></script>
+    <script src="./data.js"></script>
     <script>
         console.log(threads);
         var container = document.querySelector('ol');
         for (let thread of threads) {
             var html = `
             <li class="row">
-                <a href="/thread.html?${thread.id}">
+                <a href="./thread.html?${thread.id}">
                     <h4 class="title">
                         ${thread.title}
                     </h4>
