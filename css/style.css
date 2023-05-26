@@ -2129,35 +2129,35 @@ html.mm-blocking {
 
   .announcementText {
     padding-top: 0px;
-    margin-top: -5px;
+    margin-top: 0px;
     padding: 50px;
-    font-size: 1.1vw;
+    font-size: 1.2vw;
   }
 
   .socialsDiv {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     padding: 10px;
   }
 
   .fblink {
     display: flex;
-    flex-direction: row;
-    padding-top: 20px !important;
-    padding: 20px;
+    flex-direction: column;
+    padding-top: 10px !important;
+    padding: 10px;
   }
 
   .fblink p {
-    margin-top: 15px;
+    margin-top: 5px;
     font-size: 2vh;
     font-weight: bold;
   }
 
   .announcementLogo {
-    width: 50px;
-    padding: 5px;
+    width: 70px;
+    padding: 0px;
   }
 
   .topBanner {
@@ -2328,7 +2328,7 @@ html.mm-blocking {
       .announcementText {
         padding-top: 0px;
         margin-top: -35px;
-        font-size: 1.7vw;
+        font-size: 1.5vw;
         padding: 10px;
         margin-bottom: 10px;
       }
