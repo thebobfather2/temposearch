@@ -1568,6 +1568,10 @@ html.mm-blocking {
         margin-left: 80px;
         padding: 5px 10px;
     }
+
+    .disclaimerBox {
+        text-align: center;
+    }
     
     
     
@@ -1807,6 +1811,11 @@ html.mm-blocking {
         position: relative;
         margin-left: 0px;
         width: 100px;
+    }
+
+    .disclaimerBox {
+        margin-top: 120px;
+        text-align: center;
     }
 }
     
