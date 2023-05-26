@@ -4834,6 +4834,10 @@ footer #insta li img {
     line-height: 40px;
 }
 
+.bannerLive {
+    border-bottom: solid 5px #fff;
+}
+
 @media (max-width: 1199px) {
     .icons .box1 {
         width: 48%;   
