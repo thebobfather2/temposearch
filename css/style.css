@@ -1508,7 +1508,13 @@ html.mm-blocking {
       }
     
       .topBuffer {
-        height: 110px;
+        position: relative;
+        height: 50px;
+    }
+
+    .iconicHome {
+        position: relative;
+        border-bottom:  solid 2px #fff;
     }
     
     .gallery {
@@ -1839,14 +1845,17 @@ html.mm-blocking {
         width: 100%;
         overflow: hidden;
         position: relative;
-        padding-bottom: 100px;
+        padding-bottom: 50px;
     }
     .rmTitle {
+        background-color: #fff;
+        color: #000;
         display: block;
         text-align: center;
         font-size: 4vh;
-        text-shadow: 5px 5px #000;
-        margin-top:70px;
+        text-shadow: 1px 1px #797979;
+        margin-top: 70px;
+        padding-top: 20px;
     }
       .carousel {
         margin-top: 50px;
@@ -1864,6 +1873,8 @@ html.mm-blocking {
     .carouselNavmobile {
         display: block;
         margin-top: 0px;
+        background-color: #fff;
+        padding-bottom: 30px;
     }
     #prevBtn {
         width: 150px;
@@ -1896,6 +1907,7 @@ html.mm-blocking {
     }
 
     .disclaimerBox {
+        position: relative;
         font-size: 1vh;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -2164,6 +2176,10 @@ html.mm-blocking {
     text-shadow: 4px 4px red;
   }
 
+  .iconicBG {
+    width: 200px;
+  }
+
   .socialsDiv {
     position: relative;
     display: flex;
@@ -2217,6 +2233,7 @@ html.mm-blocking {
   .topBannerProfile {
     display: block;
   }
+  
 
   .banner-link {
     width: 100%;
@@ -2400,6 +2417,11 @@ html.mm-blocking {
         display: block;
         border-top: none;
       }
+
+      .iconicHome {
+        position: relative;
+        border-bottom:  none;
+    }
     .joinus {
         font-size: 5vw;
     }
@@ -2495,8 +2517,9 @@ html.mm-blocking {
         margin-bottom: 0px;
       }
       .iconiclowBox {
-        margin-top:20px;
-        margin-bottom: 30px;
+        margin-top:30px;
+        margin-left: 15px;
+        margin-bottom: 20px;
 
       }
       .iconicMainBoxmobile img {
@@ -2521,7 +2544,7 @@ display: none;
       .fourSquare {
         display: flex;
         flex-direction: column;
-        margin-top: 40px;
+        margin-top: 0px;
         margin-left: 10px;
         margin-right: 10px;
         padding: 10px;
