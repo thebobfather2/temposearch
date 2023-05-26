@@ -1343,7 +1343,7 @@ html.mm-blocking {
 
       .fourSquare {
         margin-bottom: 90px;
-        margin-top: 90px;
+        margin-top: 0px;
         padding: 50px;
         display: grid;
         grid-template-columns: 3fr 2fr; /* adjust the column widths */
@@ -1431,6 +1431,7 @@ html.mm-blocking {
       .iconicHeading {
         font-family: 'Anton', sans-serif;
         font-size: 3vw;
+        text-shadow: 15px 15px #000000;
       }
 
       .iconicText {
@@ -1512,7 +1513,21 @@ html.mm-blocking {
         width: 100%;
         padding-top: 5px;
         position: relative;
-        border-bottom:  solid 2px #fff;
+    }
+
+    .whiteBanner {
+        position: relative;
+        background-color: #fff;
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+
+    .whiteBannertext {
+        font-family: 'Anton', sans-serif;
+        text-shadow: 4px 4px #00000040;
+        color: #000;
+        text-align: center;
+        font-size: 4vw;
     }
     
     .gallery {
@@ -1866,6 +1881,8 @@ html.mm-blocking {
         width: 50%;
         height: 200px;
         padding: 0px;
+        border-top: solid 1px #fff;
+        border-bottom: solid 1px #fff;
     }
     .carouselNav {
         display: none;
@@ -1909,13 +1926,17 @@ html.mm-blocking {
     }
 
     .disclaimerBox {
+        color: #000;
         position: relative;
         font-size: 1vh;
-        margin-top: 0px;
+        margin-top: -40px;
         margin-bottom: 0px;
         text-align: center;
-        padding-bottom: 20px;
+        padding-bottom: 10px;
         border-bottom: solid 5px #fff;
+        margin-right: 10px;
+        margin-left: 10px;
+        background-color: #fff;
     }
 }
     
@@ -2521,7 +2542,7 @@ html.mm-blocking {
         margin-bottom: 0px;
       }
       .iconiclowBox {
-        margin-top:30px;
+        margin-top:50px;
         margin-bottom: 20px;
 
       }
@@ -2556,7 +2577,8 @@ display: none;
         padding: 10px;
         padding-top: 0px;
         border: solid 2px #fff;
-        margin-bottom: 40px;
+        margin-bottom: 0px;
+        border-bottom: none;
     }
     .fourSquare div:nth-child(3) {
     order: 4; /* make the third div appear after the fourth div */
