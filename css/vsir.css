@@ -35,6 +35,7 @@
 
 }
 
+
 .profileMarketplace {
   flex: 1;
   margin-top: 5%;
@@ -49,7 +50,6 @@
   border-color: white;
   border: solid;
 }
-
 
 @media (max-width: 768px) { /* adjust to your desired screen size */
 

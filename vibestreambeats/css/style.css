@@ -4833,4 +4833,10 @@ footer #insta li img {
         max-width: 300px;
         padding-bottom: 40px;
     }
+    .oops {
+        margin-top: -80px;
+        padding: 20px;
+        font-size: 6vw;
+        text-align: center;
+    }
 }
