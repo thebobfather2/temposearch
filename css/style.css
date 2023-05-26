@@ -1842,7 +1842,7 @@ html.mm-blocking {
         text-align: center;
         font-size: 4vh;
         text-shadow: 5px 5px #000;
-        margin-top:80px;
+        margin-top:70px;
     }
       .carousel {
         margin-top: 50px;
@@ -2428,7 +2428,7 @@ html.mm-blocking {
         border-bottom: solid 2px #fff;
       }
       .iconiclowBox {
-        margin-top:0px;
+        margin-top:10px;
         margin-bottom: 30px;
 
       }
