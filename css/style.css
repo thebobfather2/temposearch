@@ -1843,7 +1843,7 @@ html.mm-blocking {
         width: 100%;
         overflow: hidden;
         position: relative;
-        padding-bottom: 50px;
+        padding-bottom: 0px;
     }
     .rmTitle {
         background-color: #fff;
@@ -1852,8 +1852,10 @@ html.mm-blocking {
         text-align: center;
         font-size: 4vh;
         text-shadow: 1px 1px #797979;
-        margin-top: 70px;
+        margin-top: 0px;
         padding-top: 20px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
       .carousel {
         margin-top: 50px;
@@ -1873,6 +1875,8 @@ html.mm-blocking {
         margin-top: 0px;
         background-color: #fff;
         padding-bottom: 30px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
     #prevBtn {
         width: 150px;
@@ -2420,6 +2424,7 @@ html.mm-blocking {
       .iconicHome {
         position: relative;
         border-bottom:  none;
+        padding-top: 5px;
     }
     .joinus {
         font-size: 5vw;
@@ -2536,11 +2541,12 @@ display: none;
     }
     .iconiclowBox img {
         width: 100%;
-        margin-left: 15px;
+        margin-left: 10px;
         animation: none;
         display: inline-block;
     }
       .fourSquare {
+        position: relative;
         background-color: transparent;
         display: flex;
         flex-direction: column;
@@ -2550,6 +2556,7 @@ display: none;
         padding: 10px;
         padding-top: 0px;
         border: solid 2px #fff;
+        margin-bottom: 40px;
     }
     .fourSquare div:nth-child(3) {
     order: 4; /* make the third div appear after the fourth div */
