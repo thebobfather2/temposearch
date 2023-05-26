@@ -1342,6 +1342,7 @@ html.mm-blocking {
       }
 
       .fourSquare {
+        margin-bottom: 90px;
         margin-top: 90px;
         padding: 50px;
         display: grid;
@@ -1506,13 +1507,10 @@ html.mm-blocking {
         opacity: 1;
         visibility: visible;
       }
-    
-      .topBuffer {
-        position: relative;
-        height: 50px;
-    }
 
     .iconicHome {
+        width: 100%;
+        padding-top: 5px;
         position: relative;
         border-bottom:  solid 2px #fff;
     }
@@ -2075,7 +2073,8 @@ html.mm-blocking {
     }
     
 .topBuffer {
-    height: 110px;
+    position: relative;
+    min-height: 120px;
 }
 
 .topBufferAbout {
@@ -2332,7 +2331,7 @@ html.mm-blocking {
       text-align: center;
     }
     .topBuffer {
-        height: 50px;
+        min-height: 60px;
     }
 
     .announcementBanner {
@@ -2518,7 +2517,6 @@ html.mm-blocking {
       }
       .iconiclowBox {
         margin-top:30px;
-        margin-left: 15px;
         margin-bottom: 20px;
 
       }
@@ -2538,10 +2536,12 @@ display: none;
     }
     .iconiclowBox img {
         width: 100%;
+        margin-left: 15px;
         animation: none;
         display: inline-block;
     }
       .fourSquare {
+        background-color: transparent;
         display: flex;
         flex-direction: column;
         margin-top: 0px;
@@ -2549,6 +2549,7 @@ display: none;
         margin-right: 10px;
         padding: 10px;
         padding-top: 0px;
+        border: solid 2px #fff;
     }
     .fourSquare div:nth-child(3) {
     order: 4; /* make the third div appear after the fourth div */
