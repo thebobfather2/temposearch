@@ -4779,12 +4779,27 @@ footer #insta li img {
 }
 
 .lockImg {
+    margin-top: 40px;
     max-width: 1400px;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
 }
 
 .oops {
+    font-family: 'Caveat', cursive;
+    font-size: 6.8vw;
+    text-align: center;
+}
+
+.oopsText {
+    font-family: 'Secular One', sans-serif;
     font-size: 1.8vw;
+    text-align: center;
+}
+
+.oopstextEnd {
+    margin-top: 25px;
+    font-family: 'Caveat', cursive;
+    font-size: 3.8vw;
     text-align: center;
 }
 
@@ -4819,6 +4834,10 @@ footer #insta li img {
     line-height: 40px;
 }
 
+.bannerLive {
+    border-bottom: solid 5px #fff;
+}
+
 @media (max-width: 1199px) {
     .icons .box1 {
         width: 48%;   
@@ -4828,7 +4847,10 @@ footer #insta li img {
     .icons .box1 {
         width: 98%;   
     }
-
+.bannerLive {
+    margin-bottom: -10px;
+    border-bottom: solid 5px #fff;
+}
     .lockImg {
         max-width: 300px;
         padding-bottom: 40px;
@@ -4836,7 +4858,19 @@ footer #insta li img {
     .oops {
         margin-top: -80px;
         padding: 20px;
-        font-size: 6vw;
+        font-size: 10vw;
+        text-align: center;
+    }
+    .oopsText {
+        padding: 20px;
+        font-size: 5vw;
+        text-align: center;
+    }
+
+    .oopstextEnd {
+        margin-top: 0px;
+        padding: 10px;
+        font-size: 6.5vw;
         text-align: center;
     }
 }
