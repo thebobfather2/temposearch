@@ -1814,7 +1814,8 @@ html.mm-blocking {
     }
 
     .disclaimerBox {
-        margin-top: 120px;
+        margin-top: 0px;
+        margin-bottom: 100px;
         text-align: center;
     }
 }
