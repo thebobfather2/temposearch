@@ -2285,7 +2285,7 @@ html.mm-blocking {
     }
 
     .announcementBanner {
-        height: 200px;
+        height: 150px;
         padding-top: 40px;
         text-align: center;
         display: flex;
@@ -2326,6 +2326,7 @@ html.mm-blocking {
       }
     
       .announcementText {
+        display: none;
         padding-top: 0px;
         margin-top: -35px;
         font-size: 1.5vw;
@@ -2346,7 +2347,7 @@ html.mm-blocking {
         font-size: 3vw;
         padding-top: 0px !important;
         padding: 10px;
-        margin-top: -15px;
+        margin-top: -10px;
       }
 
       .fblink p {
@@ -2422,7 +2423,7 @@ html.mm-blocking {
         zoom: 0.3;
       }
       .iconicMainBox {
-        margin-top:15px;
+        margin-top:5px;
         margin-bottom: 0px;
         border-bottom: solid 2px #fff;
       }
@@ -2438,6 +2439,7 @@ html.mm-blocking {
         background-size: 200% 100%;
         background-repeat: no-repeat;
         display: inline-block;
+        border-top: solid 3px #fff;
     }
     .iconiclowBox img {
         width: 100%;
