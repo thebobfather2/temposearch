@@ -2558,6 +2558,7 @@ html.mm-blocking {
         top: 200px;
         zoom: 0.3;
       }
+
       .iconicMainBox {
         display: none;
       }
@@ -2577,6 +2578,7 @@ html.mm-blocking {
         margin-bottom: 20px;
 
       }
+      
       .iconicHome {
         display: none;
       }
