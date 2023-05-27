@@ -1643,6 +1643,10 @@ html.mm-blocking {
         text-align: center;
     }
 
+    .disclaimerText {
+
+    }
+
     .rmTitle {
         display: none;
     }
@@ -1890,54 +1894,60 @@ html.mm-blocking {
     .carouselNavmobile {
         display: block;
         margin-top: 0px;
-        background-color: #fff;
         padding-bottom: 30px;
+        background-color: #fff;
         margin-left: 10px;
         margin-right: 10px;
     }
     #prevBtn {
-        width: 150px;
+        width: 120px;
         font-size: 2vh;
         background-color: #000;
-        padding: 5px 10px;
+        padding: 10px;
         border: solid 3px #fff;
         position: relative;
     }
 
     #nextBtn {
-        width: 150px;
+        width: 120px;
         position: relative;
         font-size: 2vh;
         background-color: #000;
-        padding: 5px 10px;
+        padding: 10px;
         border: solid 3px #fff;
     }
     .navBtnicon1 {
         position: relative;
-        margin-left: 50px;
+        margin-left: 55px;
         margin-right: 0px;
         width: 100px;
         margin-top: 25px;
     }
     .navBtnicon2 {
         position: relative;
-        margin-left: 0px;
+        margin-left: 20px;
         width: 100px;
     }
 
     .disclaimerBox {
+        display: flex;
         color: #000;
         position: relative;
-        font-size: 1vh;
+        font-size: 2vh;
         margin-top: -40px;
         margin-bottom: 0px;
         text-align: center;
-        padding-bottom: 10px;
+        padding-bottom: 30px;
         border-bottom: solid 5px #fff;
         margin-right: 10px;
         margin-left: 10px;
         background-color: #fff;
     }
+
+    .disclaimerText {
+        padding-top: 30px;
+    }
+
 }
     
       .buttonBox {
@@ -2447,6 +2457,21 @@ html.mm-blocking {
         border-bottom:  none;
         padding-top: 5px;
     }
+    .whiteBanner {
+        margin-top: -40px;
+        position: relative;
+        background-color: #fff;
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+
+    .whiteBannertext {
+        font-family: 'Anton', sans-serif;
+        text-shadow: 4px 4px #00000040;
+        color: #000;
+        text-align: center;
+        font-size: 6vw;
+    }
     .joinus {
         font-size: 5vw;
     }
@@ -2537,14 +2562,22 @@ html.mm-blocking {
       }
 
       .iconicMainBoxmobile {
+        margin-left: 10px;
+        margin-right: 10px;
         display: flex;
-        margin-top: 0px;
+        margin-top: -20px;
         margin-bottom: 0px;
+        border: solid 3px #fff;
+        border-top: none;
+        border-bottom: none;
       }
       .iconiclowBox {
-        margin-top:50px;
+        margin-top:40px;
         margin-bottom: 20px;
 
+      }
+      .iconicHome {
+        display: none;
       }
       .iconicMainBoxmobile img {
         width: 100%;
@@ -2555,7 +2588,7 @@ html.mm-blocking {
         display: inline-block;
         border-top: solid 3px #fff;
         padding-top: 30px;
-        padding-bottom: 30px;
+        padding-bottom: 50px;
     }
     .iconicMainBox img {
 display: none;
