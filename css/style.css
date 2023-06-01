@@ -2157,6 +2157,45 @@ html.mm-blocking {
     height: 50px;
 }
 
+.ticker-container {
+  overflow: hidden;
+  height: 45px; /* Adjust the height as needed */
+  padding-top: 5px;
+  color: #000;
+  font-size: 1.5vw;
+  font-weight: bold;
+  background-color: #e6ff05;
+  border-top: solid 2px #fff;
+  border-bottom: solid 2px #ffffff50;
+  width: 2000px;
+  box-shadow: 0px 5px #ffffff50;
+
+}
+
+.ticker {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    animation: ticker 25s linear infinite; /* Adjust the animation duration as needed */
+    white-space: nowrap; /* Prevent line breaks */
+}
+
+.ticker li {
+  display: inline;
+  margin-right: 10px; 
+  /* Adjust the spacing between news items as needed */
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+
 .aboutMain {
     display: flex;
     flex-direction: column;
