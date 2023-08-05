@@ -1287,6 +1287,16 @@ html.mm-blocking {
       width: 66.67%;
     }
 
+    .joshfundInfoBoxmobile {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 33.33%;
+      padding: 20px;
+      margin-top: 100px;
+    }
+
     .joshfundInfoBox {
         display: flex;
         flex-direction: column;
@@ -2635,6 +2645,18 @@ html.mm-blocking {
       }
 
       .joshfundInfoBox { 
+        display: none;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0px;
+        position: relative;
+        align-items: center;
+        justify-content: center;
+        margin-top: 35px;
+      }
+
+      .joshfundInfoBoxmobile { 
+        display: flex;
         width: 100%;
         margin: 0 auto;
         padding: 0px;
