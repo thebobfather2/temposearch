@@ -2462,6 +2462,7 @@ html.mm-blocking {
   
   /* For mobile */
   @media screen and (max-width: 767px) {
+    
     .etuMainBox {
       display: block;
       text-align: center;
@@ -2620,7 +2621,37 @@ html.mm-blocking {
       margin: 0 auto;
       padding: 10px;
     }
-
+.contactHome {
+    display: none;
+}
+.contactHomemobile {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 100px;
+}
+.contactButtonbody {
+    position: absolute !important;
+    top: 0;
+    left: 0 !important;
+    transform: translate(-50%, -50%); /* Center the button */
+    text-align: center;
+}
+.contactButton {
+    display: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 300px;
+    margin-top: 50px;
+    margin-left: 45px;
+}
     .etuInfoBox {
         width: 100%;
         margin: 0 auto;
@@ -2978,6 +3009,34 @@ display: none;
     background-repeat: no-repeat;	
     background-size: cover;   
 }
+/* styles.css */
+.contactHome {display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 100px;
+}
+.contactHomemobile {
+    display: none;
+}
+.contactButtonbody {
+    position: absolute;
+    top: 50%;
+    left: 70%;
+    transform: translate(-50%, -50%); /* Center the button */
+    text-align: center;
+}
+.contactButton {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 300px;
+    margin-top: 50px;
+}
+
 .home-content-above {
     position: absolute;
     width: 100%;

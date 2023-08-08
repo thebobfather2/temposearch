@@ -373,6 +373,63 @@
         <div class="cl-item"><img src="images/partner-astoria-white.png" alt="Client 1"></div>
     </div>
 </section>
+
+<section class="contactHome" >
+    <div class="contactButtonbody">
+        <br>
+        <br>
+            <div clas="buttonContainer">
+                <button id="contactButton" class="contactButton">Contact Us</button>
+            </div>
+        <br>
+                <script>
+                    // Get a reference to the button element
+                    const contactButton = document.getElementById('contactButton');
+
+                    // Add a click event listener to the button
+                    contactButton.addEventListener('click', () => {
+                        // Create a mailto link
+                        const email = 'vibestreamnetwork@gmail.com';
+                        const subject = 'Contact Inquiry';
+                        const body = 'Hello, I have a question...';
+
+                        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+                        // Open the mailto link in a new tab/window
+                        window.open(mailtoLink, '_blank');
+                    });
+                </script>
+    </div>
+</section>
+
+<section class="contactHomemobile" >
+    <div class="contactButtonbody">
+        <br>
+        <br>
+            <div clas="buttonContainer">
+                <button id="contactButton" class="contactButton">Contact Us</button>
+            </div>
+        <br>
+                <script>
+                    // Get a reference to the button element
+                    const contactButton = document.getElementById('contactButton');
+
+                    // Add a click event listener to the button
+                    contactButton.addEventListener('click', () => {
+                        // Create a mailto link
+                        const email = 'vibestreamnetwork@gmail.com';
+                        const subject = 'Contact Inquiry';
+                        const body = 'Hello, I have a question...';
+
+                        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+                        // Open the mailto link in a new tab/window
+                        window.open(mailtoLink, '_blank');
+                    });
+                </script>
+    </div>
+</section>
+
 <br>
     <nav id="menu">
         <ul>
