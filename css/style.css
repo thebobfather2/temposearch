@@ -2537,7 +2537,7 @@ html.mm-blocking {
   
   /* Center the videoChatbtn below the videoChatbox */
     .videoChatbtn {
-        margin-top: 0px; /* Add some spacing between the boxes */
+        margin-top: 20px; /* Add some spacing between the boxes */
         display: block; /* Make the button a block-level element */
         text-align: center;
     }
