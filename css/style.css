@@ -1278,11 +1278,6 @@ html.mm-blocking {
 /* For desktop */
 
 /* Center the videoChatbox */
-.videoChat2 {
-    display: relative;
-    text-align: center;
-    margin-bottom: 50px;
-}
     .videoChat {
         text-align: center;
         margin-bottom: 50px;
@@ -1299,6 +1294,10 @@ html.mm-blocking {
         box-shadow: 0 0 15px rgba(0, 123, 255, 0.6); /* Initial box shadow */
         animation: glow 2s infinite alternate; /* Animation for glowing effect */
         text-align: center;
+    }
+
+    .interiorvideoChatbox2 iframe {
+        
     }
 
     @keyframes glow {
@@ -2537,6 +2536,10 @@ html.mm-blocking {
         border: none;
         animation: none;
         box-shadow: none;
+    }
+
+    .interiorvideoChatbox2 iframe {
+
     }
 
   
