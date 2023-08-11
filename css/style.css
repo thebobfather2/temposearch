@@ -1278,6 +1278,11 @@ html.mm-blocking {
 /* For desktop */
 
 /* Center the videoChatbox */
+.videoChat2 {
+    display: relative;
+    text-align: center;
+    margin-bottom: 50px;
+}
     .videoChat {
         text-align: center;
         margin-bottom: 50px;
