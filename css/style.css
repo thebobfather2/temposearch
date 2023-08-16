@@ -1292,22 +1292,9 @@ html.mm-blocking {
         margin: 0 auto;
         border: 2px solid transparent; /* Initial border */
         box-shadow: 0 0 15px rgba(0, 123, 255, 0.6); /* Initial box shadow */
-        animation: glow 2s infinite alternate; /* Animation for glowing effect */
         text-align: center;
     }
 
-    .interiorvideoChatbox2 iframe {
-        
-    }
-
-    @keyframes glow {
-        0% {
-            box-shadow: 0 0 25px rgba(0, 123, 255, 0.6);
-        }
-        100% {
-            box-shadow: 0 0 40px rgba(0, 123, 255, 0.8);
-        }
-    }
   
   /* Center the videoChatbtn below the videoChatbox */
     .videoChatbtn {
