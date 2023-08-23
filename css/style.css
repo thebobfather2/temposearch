@@ -1190,6 +1190,7 @@ html.mm-blocking {
     padding-left: 0px !important;
     padding-right: 0px !important;
     padding: 50px;
+    margin-bottom: 20px;
 }
 .half-section-square {
     position: relative;
@@ -6114,8 +6115,7 @@ a.link-post {
 }
 .client-cl .cl-item img {
     display: block;
-    width: 150px;
-    margin-left: 60px;
+    width: 200px;
 }
 
 
@@ -6140,6 +6140,11 @@ a.link-post {
     .client-cl .cl-item2 img {
       margin-left: 65px;
       width: 250px;
+    }
+    .client-cl .cl-item img {
+        display: block;
+        width: 200px;
+        margin-left: 95px;
     }
   }
   
