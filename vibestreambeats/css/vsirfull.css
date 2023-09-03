@@ -17,7 +17,6 @@
   display: relative;
   justify-content: center;
   align-items: center;
-  margin-right: 40px; /* adjust as needed */
 }
 
 .purchaseButton,
@@ -27,13 +26,14 @@
     position: relative;
     justify-content: center;
     align-items: center;
-    margin-top: 100vh;
-    margin-bottom: 100px;
+    margin-bottom: 60px;
+    margin-right: 20px;
+    margin-left: 20px;
 
 }
 
 .btnImage {
-  width: 200px;
+  width: 30vw;
 }
 
 .livepurchaseButton {
@@ -57,9 +57,6 @@ video {
   max-height: 100vh;
   background-color: black;
   box-shadow: 20px 20px #00000020;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 
@@ -149,19 +146,17 @@ video {
 
 @media (max-width: 900px) {
     video {
+      position: relative;
       display: flex;
-      align-items: center;
       justify-content: center;
-      margin-top: 0px !important;
+      align-items: center;
       border-width: 5px !important;
-      border: solid;
-      box-shadow: 20px 20px #00000020;
       border-color: white;
-      width: 80%;
+      border: solid;
+      width: 100%;
+      max-height: 100vh;
       background-color: black;
-      top: 15%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      box-shadow: 20px 20px #00000020;
     }
 
     .vidWindow {
@@ -169,28 +164,36 @@ video {
     }
 
     .buttonBox {
+      margin-top: -40px;
+      display: flex;
+      flex-direction: row;
       position: relative;
-      top: 2%;
-      left: 24%;
       text-align: center;
-      margin-bottom: 100px;
+      justify-content: center;
+      align-items: center;
       }
     
       .buttonBox a {
-        display: inline-block;
-        vertical-align: top;
-        margin-right: 10px; /* adjust as needed */
+        display: flex;
+        display: relative;
+        justify-content: center;
+        align-items: center;
       }
     
       .purchaseButton,
       .nextButton {
-          display: inline-block;
-          margin-top:220px;
-          margin-right: 10px; /* Optional, to add some spacing between the buttons */
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 0px;
+        margin-right: 10px;
+        margin-left: 10px;
       }
 
       .btnImage {
-          width: 100px;
+          width: 150px;
       }
     
 }
