@@ -50,13 +50,14 @@ video {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-width: 10px !important;
+  border-width: 0px !important;
   border-color: white;
-  border: solid;
-  min-width: 100%;
+  border-bottom: solid;
+  border-top: solid;
+  width: 100%;
   max-height: 100vh;
   background-color: black;
-  box-shadow: 20px 20px #00000020;
+  overflow: "hidden";
 }
 
 
