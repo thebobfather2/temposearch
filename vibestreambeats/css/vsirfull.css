@@ -4,24 +4,32 @@
 }
 
 .buttonBox {
-  position: absolute;
-  top: 90%;
-  left: 35%;
+  display: flex;
+  flex-direction: row;
+  position: relative;
   text-align: center;
-  margin-bottom: 100px;
+  justify-content: center;
+  align-items: center;
   }
 
 .buttonBox a {
-  display: inline-block;
-  vertical-align: top;
-  margin-right: 10px; /* adjust as needed */
+  display: flex;
+  display: relative;
+  justify-content: center;
+  align-items: center;
+  margin-right: 40px; /* adjust as needed */
 }
 
 .purchaseButton,
 .nextButton {
-    display: inline-block;
-    margin-top: 60px;
-    margin-right: 10px; /* Optional, to add some spacing between the buttons */
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100vh;
+    margin-bottom: 100px;
+
 }
 
 .btnImage {
@@ -38,17 +46,20 @@
 }
 
 video {
+  position: relative;
   display: flex;
+  justify-content: center;
+  align-items: center;
   border-width: 10px !important;
   border-color: white;
   border: solid;
-  width: 80%;
+  min-width: 100%;
+  max-height: 100vh;
   background-color: black;
   box-shadow: 20px 20px #00000020;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
 }
 
 
@@ -158,8 +169,8 @@ video {
     }
 
     .buttonBox {
-      position: absolute;
-      top: 1%;
+      position: relative;
+      top: 2%;
       left: 24%;
       text-align: center;
       margin-bottom: 100px;
