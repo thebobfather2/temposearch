@@ -450,6 +450,8 @@
             const currentLevel = player.getBitrateInfoListFor("video")[player.getQualityFor("video")];
     
             document.getElementById("bitrate").innerHTML = `${currentLevel.width}x${currentLevel.height} | ${currentLevel.bitrate / 1000 / 1000} Mbps`;
+
+            player.autoplay = true; 
           });
         };
     
