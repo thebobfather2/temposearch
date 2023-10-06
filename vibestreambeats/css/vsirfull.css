@@ -3,6 +3,50 @@
   visibility: visible;
 }
 
+/* Add this CSS to your stylesheet or in a <style> tag in the head */
+
+/* Style for song items */
+.song-item {
+  color: #000;
+  background-color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  max-width: 20%;
+}
+
+/* Style for PLAY buttons */
+.play-button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* Style for horizontal line separators */
+hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 10px 0;
+}
+
+
+#searchInput {
+  color: black;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: black;
+  display: block;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
 .VSIRmain {
 position: relative;
 }
